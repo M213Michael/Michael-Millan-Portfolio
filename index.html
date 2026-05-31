@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michael Millan — Mechanical Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d0d0b; --bg2: #141410; --bg3: #1c1c17;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.14);
+    --amber: #c8871a; --amber-light: #e8a030; --amber-dim: rgba(200,135,26,0.15);
+    --text: #e8e4d8; --text2: #9a9485; --text3: #5c5850;
+    --mono: 'Space Mono', monospace; --sans: 'Barlow', sans-serif; --condensed: 'Barlow Condensed', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-weight: 400; line-height: 1.6; min-height: 100vh; overflow-x: hidden; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .img-pending { width: 100%; height: 100%; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.015) 10px, rgba(255,255,255,0.015) 20px), var(--bg3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .img-pending svg { width: 28px; height: 28px; opacity: 0.25; }
+  .img-pending span { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; text-align:center; padding:0 8px; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(13,13,11,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .nav-logo { font-family: var(--mono); font-size: 13px; color: var(--amber); letter-spacing: 0.08em; cursor: pointer; background: none; border: none; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); text-decoration: none; transition: color 0.2s; cursor: pointer; }
+  .nav-links a:hover { color: var(--amber-light); }
+
+  .hero { min-height: 100vh; display: grid; grid-template-columns: 1.4fr 1fr; align-items: end; gap: 3rem; padding: 0 3rem 5rem; position: relative; border-bottom: 1px solid var(--border); }
+  .hero-content { display: flex; flex-direction: column; justify-content: flex-end; z-index: 2; }
+  .hero-grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 60px 60px; mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.3) 30%, rgba(0,0,0,0.3) 70%, transparent 100%); pointer-events: none; }
+  .hero-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; color: var(--amber); text-transform: uppercase; margin-bottom: 1.5rem; }
+  .hero-name { font-family: var(--condensed); font-size: clamp(4rem, 8vw, 7.5rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.01em; text-transform: uppercase; margin-bottom: 1.5rem; }
+  .hero-name span { color: var(--amber); }
+  .hero-tagline { font-size: 1.1rem; font-weight: 300; color: var(--text2); max-width: 520px; margin-bottom: 2.5rem; line-height: 1.7; }
+  .hero-meta { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .hero-stat { display: flex; flex-direction: column; gap: 2px; }
+  .hero-stat-val { font-family: var(--condensed); font-size: 1.5rem; font-weight: 600; }
+  .hero-stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--text3); text-transform: uppercase; }
+  .hero-cta { display: inline-flex; align-items: center; gap: 10px; margin-top: 2rem; padding: 12px 24px; border: 1px solid var(--amber); color: var(--amber); font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; width: fit-content; transition: background 0.2s; }
+  .hero-cta:hover { background: var(--amber-dim); }
+  .hero-portrait-wrap { position: relative; z-index: 2; align-self: end; margin-bottom: 1rem; }
+  .hero-portrait { width: 100%; aspect-ratio: 4/5; background: var(--bg2); border: 1px solid var(--border2); position: relative; overflow: hidden; }
+  .hero-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .portrait-corner { position: absolute; width: 14px; height: 14px; border-color: var(--amber); z-index: 3; }
+  .portrait-corner.tl { top: 8px; left: 8px; border-top: 1px solid; border-left: 1px solid; }
+  .portrait-corner.br { bottom: 8px; right: 8px; border-bottom: 1px solid; border-right: 1px solid; }
+  .scroll-indicator { position: absolute; bottom: 2rem; right: 3rem; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--text3); display: flex; align-items: center; gap: 8px; z-index: 2; }
+  .scroll-indicator::before { content: ''; display: block; width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--text3)); }
+
+  section { padding: 6rem 3rem; border-bottom: 1px solid var(--border); }
+  .section-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 3rem; }
+  .section-num { font-family: var(--mono); font-size: 11px; color: var(--amber); }
+  .section-title { font-family: var(--condensed); font-size: 2.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+  .section-line { flex: 1; height: 1px; background: var(--border2); margin-left: 1rem; }
+
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .about-body { font-size: 1rem; font-weight: 300; color: var(--text2); line-height: 1.8; }
+  .about-body p + p { margin-top: 1rem; }
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .skill-block { border: 1px solid var(--border); padding: 1rem 1.25rem; background: var(--bg2); }
+  .skill-block-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--amber); text-transform: uppercase; margin-bottom: 0.5rem; }
+  .skill-block-items { font-size: 13px; font-weight: 300; color: var(--text2); line-height: 1.7; }
+
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5px; background: var(--border); }
+  .project-card { background: var(--bg); padding: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+  .project-card-head { cursor: pointer; }
+  .project-num { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.1em; }
+  .project-thumb { width: 100%; aspect-ratio: 16/10; background: var(--bg2); border: 1px solid var(--border); overflow: hidden; margin: 0.5rem 0; position: relative; }
+  .project-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .project-title { font-family: var(--condensed); font-size: 1.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.1; display: flex; align-items: center; gap: 10px; }
+  .project-title .chev { font-size: 0.9rem; color: var(--amber); transition: transform 0.25s; margin-left: auto; }
+  .project-card.open .chev { transform: rotate(90deg); }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border: 1px solid var(--border2); color: var(--text3); }
+  .project-brief { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .project-card.open .project-brief { max-height: 360px; }
+  .project-brief-inner { padding-top: 0.75rem; }
+  .project-desc { font-size: 13px; font-weight: 300; color: var(--text2); line-height: 1.7; margin-bottom: 1rem; }
+  .project-viewmore { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1px solid var(--border2); background: transparent; color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, border-color 0.2s; width: fit-content; }
+  .project-viewmore:hover { background: var(--amber-dim); border-color: var(--amber); }
+  .project-viewmore::after { content: '→'; transition: transform 0.2s; }
+  .project-viewmore:hover::after { transform: translateX(4px); }
+
+  .more-dropdown { margin-top: 1.5px; background: var(--bg); }
+  .more-toggle { width: 100%; padding: 1.5rem 2rem; background: var(--bg); border: none; border-top: 1px solid var(--border); color: var(--text); font-family: var(--condensed); font-size: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.2s; }
+  .more-toggle:hover { background: var(--bg3); }
+  .more-toggle .chev { color: var(--amber); transition: transform 0.25s; margin-left: auto; }
+  .more-dropdown.open .more-toggle .chev { transform: rotate(90deg); }
+  .more-list { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg2); }
+  .more-dropdown.open .more-list { max-height: 800px; }
+  .more-item { padding: 1.25rem 2rem; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s; }
+  .more-item:hover { background: var(--bg3); }
+  .more-item-name { font-family: var(--condensed); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+  .more-item-desc { font-size: 12px; font-weight: 300; color: var(--text2); }
+  .more-item-arrow { margin-left: auto; color: var(--amber); font-family: var(--mono); font-size: 12px; }
+
+  .detail-page { padding-top: 56px; }
+  .detail-hero { padding: 5rem 3rem 3rem; border-bottom: 1px solid var(--border); }
+  .detail-hero-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: start; }
+  .detail-back { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); background: none; border: none; cursor: pointer; margin-bottom: 2.5rem; transition: color 0.2s; }
+  .detail-back:hover { color: var(--amber); }
+  .detail-back::before { content: '←'; }
+  .detail-page-num { font-family: var(--mono); font-size: 12px; color: var(--amber); letter-spacing: 0.1em; margin-bottom: 1rem; }
+  .detail-page-title { font-family: var(--condensed); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700; text-transform: uppercase; line-height: 0.95; margin-bottom: 1.5rem; }
+  .detail-page-lead { font-size: 1.1rem; font-weight: 300; color: var(--text2); line-height: 1.7; }
+  .detail-page-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+
+  .hero-gallery { display: flex; flex-direction: column; gap: 10px; }
+  .hero-main { aspect-ratio: 4/3; background: var(--bg2); border: 1px solid var(--border2); overflow: hidden; position: relative; }
+  .hero-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; background: rgba(13,13,11,0.7); border: 1px solid var(--border2); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.2s, border-color 0.2s; z-index: 2; }
+  .hero-arrow:hover { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+  .hero-arrow.prev { left: 10px; }
+  .hero-arrow.next { right: 10px; }
+  .hero-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 6px; }
+  .hero-thumb { aspect-ratio: 1; background: var(--bg3); border: 1px solid var(--border); overflow: hidden; cursor: pointer; opacity: 0.5; transition: opacity 0.2s, border-color 0.2s; }
+  .hero-thumb:hover { opacity: 0.85; }
+  .hero-thumb.active { opacity: 1; border-color: var(--amber); }
+  .hero-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .detail-body-section { padding: 4rem 3rem; border-bottom: 1px solid var(--border); }
+  .detail-layout { display: grid; grid-template-columns: 280px 1fr; gap: 4rem; align-items: start; }
+  .detail-specs-panel { border: 1px solid var(--border); background: var(--bg2); padding: 1.5rem; position: sticky; top: 80px; }
+  .detail-specs-panel h4 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 1rem; font-weight: 400; }
+  .spec-row { display: flex; flex-direction: column; gap: 3px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-key { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text3); text-transform: uppercase; }
+  .spec-val { font-size: 13px; font-weight: 300; }
+  .detail-prose h3 { font-family: var(--condensed); font-size: 1.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; margin: 2rem 0 1rem; }
+  .detail-prose h3:first-child { margin-top: 0; }
+  .detail-prose p { font-size: 1rem; font-weight: 300; color: var(--text2); line-height: 1.85; margin-bottom: 1rem; max-width: 680px; }
+  .detail-prose .callout { border-left: 2px solid var(--amber); padding: 1rem 0 1rem 1.5rem; margin: 2rem 0; background: var(--bg2); }
+  .detail-prose .callout p { color: var(--text); font-size: 1.05rem; margin: 0; }
+  .detail-prose .callout .callout-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.5rem; }
+
+  .version-badge { display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; padding: 3px 10px; border-radius: 0; text-transform: uppercase; margin-bottom: 1rem; }
+  .version-badge.v1 { background: rgba(226,75,74,0.12); color: #e88; border: 1px solid rgba(226,75,74,0.3); }
+  .version-badge.v2 { background: rgba(29,158,117,0.12); color: #6dcaa5; border: 1px solid rgba(29,158,117,0.3); }
+
+  .fea-image { margin: 1.5rem 0; border: 1px solid var(--border2); background: var(--bg2); aspect-ratio: 16/9; overflow: hidden; max-width: 680px; }
+  .fea-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .detail-gallery-section { padding: 4rem 3rem; border-bottom: 1px solid var(--border); }
+  .detail-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+  .gallery-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; background: var(--bg3); border: 1px solid var(--border); display: block; cursor: pointer; transition: opacity 0.2s; }
+  .gallery-img:hover { opacity: 0.85; }
+  .gallery-slot { width: 100%; aspect-ratio: 4/3; border: 1px solid var(--border); overflow: hidden; }
+  .gallery-note { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.04em; margin-top: 1.5rem; line-height: 1.6; }
+
+  .viewer-shell { display: grid; grid-template-columns: 260px 1fr; border: 1px solid var(--border2); background: var(--bg2); }
+  .model-list { border-right: 1px solid var(--border); display: flex; flex-direction: column; max-height: 560px; }
+  .model-list-head { padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text3); }
+  .model-list-scroll { overflow-y: auto; flex: 1; }
+  .model-item { padding: 1rem 1.1rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+  .model-item:hover { background: var(--bg3); }
+  .model-item.active { background: var(--bg3); border-left: 2px solid var(--amber); padding-left: calc(1.1rem - 2px); }
+  .model-item-name { font-family: var(--condensed); font-size: 1.05rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+  .model-item-desc { font-size: 11px; font-weight: 300; color: var(--text2); line-height: 1.5; margin-top: 4px; }
+  .model-item-link { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-top: 8px; display: inline-flex; align-items: center; gap: 5px; }
+  .model-empty { padding: 2rem 1.1rem; font-family: var(--mono); font-size: 10px; color: var(--text3); line-height: 1.6; letter-spacing: 0.04em; }
+  .viewer-main { display: flex; flex-direction: column; }
+  .viewer-toolbar { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .viewer-toolbar-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; margin-right: auto; }
+  .viewer-filename { font-family: var(--mono); font-size: 11px; color: var(--amber); }
+  .viewer-btn { background: transparent; border: 1px solid var(--border2); padding: 5px 12px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); cursor: pointer; transition: all 0.2s; }
+  .viewer-btn:hover { border-color: var(--amber); color: var(--amber); }
+  .viewer-canvas-wrap { width: 100%; height: 480px; position: relative; overflow: hidden; }
+  .viewer-canvas-wrap canvas { display: block; width: 100% !important; height: 100% !important; }
+  .viewer-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; pointer-events: none; }
+  .viewer-empty svg { width: 48px; height: 48px; opacity: 0.25; }
+  .viewer-empty-text { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; text-align: center; }
+  .viewer-status { padding: 0.6rem 1.25rem; border-top: 1px solid var(--border); font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--text3); display: flex; align-items: center; gap: 1rem; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+  .status-dot.active { background: var(--amber); }
+
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .contact-headline { font-family: var(--condensed); font-size: 3rem; font-weight: 700; text-transform: uppercase; line-height: 1; margin-bottom: 1rem; }
+  .contact-sub { font-size: 14px; font-weight: 300; color: var(--text2); line-height: 1.7; }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-link { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.25rem; border: 1px solid var(--border); background: var(--bg2); text-decoration: none; transition: border-color 0.2s, background 0.2s; color: var(--text); }
+  .contact-link:hover { border-color: var(--amber); background: var(--amber-dim); }
+  .contact-link-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; width: 60px; }
+  .contact-link-val { font-size: 14px; font-weight: 300; color: var(--text2); }
+
+  footer { padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; }
+  .footer-copy { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--text3); }
+
+  .lightbox { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.92); align-items: center; justify-content: center; flex-direction: column; gap: 1rem; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; }
+  .lightbox-close { position: absolute; top: 1.5rem; right: 2rem; background: transparent; border: none; color: var(--text2); font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; cursor: pointer; text-transform: uppercase; }
+
+  @media (max-width: 820px) {
+    nav { padding: 0 1.25rem; } .nav-links { gap: 1rem; }
+    section { padding: 4rem 1.25rem; }
+    .hero { grid-template-columns: 1fr; padding: 80px 1.25rem 4rem; gap: 2rem; }
+    .hero-portrait-wrap { max-width: 280px; }
+    .about-grid, .contact-grid, .detail-layout, .detail-hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .detail-specs-panel { position: static; }
+    .detail-hero, .detail-body-section, .detail-gallery-section { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .hero-name { font-size: clamp(3rem, 15vw, 5rem); }
+    .viewer-shell { grid-template-columns: 1fr; }
+    .model-list { border-right: none; border-bottom: 1px solid var(--border); max-height: 220px; }
+    .viewer-canvas-wrap { height: 360px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="nav-logo" onclick="goHome()">MM / PORTFOLIO</button>
+  <ul class="nav-links">
+    <li><a onclick="navTo('about')">About</a></li>
+    <li><a onclick="navTo('projects')">Projects</a></li>
+    <li><a onclick="navTo('viewer')">3D Viewer</a></li>
+    <li><a onclick="navTo('contact')">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="page active" id="page-home">
+  <section class="hero" id="top">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+      <div class="hero-label">Mechanical Engineer — Arcata, CA</div>
+      <h1 class="hero-name">Michael<br><span>Millan</span></h1>
+      <p class="hero-tagline">SolidWorks design, FEA simulation, and structural fabrication. Building things that work the first time — and proving it with data when they don't.</p>
+      <div class="hero-meta">
+        <div class="hero-stat"><span class="hero-stat-val">BS ME</span><span class="hero-stat-label">UC Merced 2024</span></div>
+        <div class="hero-stat"><span class="hero-stat-val">SolidWorks</span><span class="hero-stat-label">Primary CAD</span></div>
+        <div class="hero-stat"><span class="hero-stat-val">ANSYS</span><span class="hero-stat-label">Validated FEA</span></div>
+      </div>
+      <a class="hero-cta" onclick="navTo('projects')">View Projects</a>
+    </div>
+    <div class="hero-portrait-wrap">
+      <div class="portrait-corner tl"></div><div class="portrait-corner br"></div>
+      <div class="hero-portrait" id="portrait-box">
+        <div class="img-pending"><svg viewBox="0 0 48 48" fill="none" stroke="#c8871a" stroke-width="1.2"><circle cx="24" cy="17" r="9"/><path d="M8 42c0-9 7-14 16-14s16 5 16 14"/></svg><span>portrait.jpg</span></div>
+      </div>
+    </div>
+    <div class="scroll-indicator">SCROLL</div>
+  </section>
+
+  <section id="about">
+    <div class="section-header"><span class="section-num">01</span><h2 class="section-title">About</h2><div class="section-line"></div></div>
+    <div class="about-grid">
+      <div class="about-body">
+        <p>I am a mechanical engineer based in Northern California with a focus on structural design, simulation, and fabrication documentation. My background spans SolidWorks weldment and sheet metal modeling, ANSYS Static Structural FEA, and hands-on design validation through personal build projects.</p>
+        <p>At O&amp;M Industries I produce full drawing packages for industrial fabrication clients including Tesla, Ceco Environmental, Adwest, and Nestec — primarily large-scale oxidizer systems and stainless ductwork assemblies. Outside of work I use my F-150 as an active engineering platform, taking projects from kinematic modeling through scan-to-CAD, FEA, and iterative redesign.</p>
+        <p>I am open to relocating to California, Nevada, or Arizona for a design or analysis-driven role in aerospace, defense, automotive, or off-road.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-block"><div class="skill-block-label">CAD</div><div class="skill-block-items">SolidWorks, AutoCAD, ProNest, Weldments, Sheet Metal, Drawing Packages</div></div>
+        <div class="skill-block"><div class="skill-block-label">Simulation</div><div class="skill-block-items">ANSYS Static Structural, Parametric Design Studies, Kinematic Modeling</div></div>
+        <div class="skill-block"><div class="skill-block-label">Fabrication</div><div class="skill-block-items">3D Scanning, Weld Callouts AWS D1.1, BOM &amp; Revision Control</div></div>
+        <div class="skill-block"><div class="skill-block-label">Tools</div><div class="skill-block-items">Python, AutoHotkey, Microsoft Graph API, ProNest</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Projects</h2><div class="section-line"></div></div>
+    <div class="projects-grid" id="projects-grid"></div>
+    <div class="more-dropdown" id="more-dropdown">
+      <button class="more-toggle" onclick="toggleMore()">More Projects <span class="chev">›</span></button>
+      <div class="more-list" id="more-list"></div>
+    </div>
+  </section>
+
+  <section id="viewer">
+    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">3D Viewer</h2><div class="section-line"></div></div>
+    <p style="font-size:13px; font-weight:300; color:var(--text2); margin-bottom:2rem; font-family:var(--mono); letter-spacing:0.04em;">Pick a model from the list to load it. Drag to rotate, scroll to zoom, right-drag to pan.</p>
+    <div class="viewer-shell" data-viewer="home">
+      <div class="model-list">
+        <div class="model-list-head">All models — click to view</div>
+        <div class="model-list-scroll" id="home-model-list"></div>
+      </div>
+      <div class="viewer-main">
+        <div class="viewer-toolbar">
+          <span class="viewer-toolbar-label">3D Model Viewer</span>
+          <span class="viewer-filename" data-fname="home">No model loaded</span>
+          <button class="viewer-btn" data-wire="home" onclick="VIEWERS.home.toggleWireframe()">Wireframe</button>
+          <button class="viewer-btn" onclick="VIEWERS.home.reset()">Reset View</button>
+        </div>
+        <div class="viewer-canvas-wrap" data-canvaswrap="home">
+          <div class="viewer-empty" data-empty="home"><svg viewBox="0 0 48 48" fill="none" stroke="#c8871a" stroke-width="1.2"><path d="M24 4l18 10v20L24 44 6 34V14z"/><path d="M24 4v40M6 14l18 10 18-10"/></svg><div class="viewer-empty-text">Select a model from the list</div></div>
+          <canvas data-canvas="home"></canvas>
+        </div>
+        <div class="viewer-status"><div class="status-dot" data-dot="home"></div><span data-status="home">Ready — choose a model</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Contact</h2><div class="section-line"></div></div>
+    <div class="contact-grid">
+      <div><h3 class="contact-headline">Let's Work<br>Together</h3><p class="contact-sub">Open to full-time roles in California, Nevada, or Arizona. Available to relocate on 30 days notice. No staffing agencies.</p></div>
+      <div class="contact-links">
+        <a href="mailto:millanm488@gmail.com" class="contact-link"><span class="contact-link-label">Email</span><span class="contact-link-val">millanm488@gmail.com</span></a>
+        <a href="tel:2133268756" class="contact-link"><span class="contact-link-label">Phone</span><span class="contact-link-val">(213) 326-8756</span></a>
+        <a href="#" class="contact-link" onclick="alert('Add your resume PDF link here'); return false;"><span class="contact-link-label">Resume</span><span class="contact-link-val">Download PDF →</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer><span class="footer-copy">© 2025 Michael Millan — Mechanical Engineer</span><span class="footer-copy">Arcata, CA</span></footer>
+</div>
+
+<!-- Detail pages generated into here -->
+<div id="detail-pages-root"></div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">Close ✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   SITE CONFIG — THIS IS THE ONLY PART YOU EDIT.
+   Add projects, sub-parts, images, FEA, and STLs here.
+   The entire site generates itself from this object.
+
+   FIELDS per project:
+     id        unique short id (no spaces)
+     num       label shown on card, e.g. "P-001"
+     title     display title
+     tier      "top"  = big card on landing
+               "more" = appears in the More Projects dropdown
+               "sub"  = a sub-part inside a hub (not shown on landing directly)
+     hub       (sub-parts only) id of the parent hub project
+     isHub     true if this project lists sub-parts (e.g. skid plates)
+     tags      array of short tag strings
+     lead      one-paragraph intro on the detail page
+     desc      short text in the landing card brief
+     images    array of photo paths -> hero gallery + documentation grid
+     specs     array of [label, value] pairs
+     prose     array of { h: "Heading", p: ["para", "para"] } blocks
+     callout   optional { label, text } highlighted box
+     fea       optional { text, image }  -> FEA section with an image under it
+     versions  optional array of { label:"v1"/"v2", state, text, image }
+     stls      array of { name, file, desc }  -> models in this page's viewer
+   ════════════════════════════════════════════════════════════════════ */
+
+const SITE = {
+  portrait: null,   // "images/portrait.jpg"
+
+  projects: [
+
+    {
+      id: "suspension", num: "P-001", title: "Long-Travel Suspension", tier: "top",
+      tags: ["SolidWorks", "ANSYS FEA", "Kinematics"],
+      desc: "Parametric suspension kinematic model with Design Study optimization, plus ANSYS validation that predicted a weld failure at the exact real-world location.",
+      images: [],   // "images/suspension/suspension_01.jpg", ...
+      specs: [
+        ["Vehicle", "2021 Ford F-150, 5.0 Coyote V8"],
+        ["Software", "SolidWorks, ANSYS Mechanical"],
+        ["Analysis", "Static Structural FEA, Kinematic Design Study"],
+        ["Validation", "Weld failure predicted at exact physical location"]
+      ],
+      lead: "A parametric front suspension taken from kinematic model through FEA validation, using my 2021 F-150 as the test platform. The headline result: a simulation that predicted a weld failure at the exact location it later occurred in the real world.",
+      prose: [
+        { h: "Objective", p: ["The goal was a long-travel front suspension that maximized wheel travel for off-road use while keeping camber, caster, and bumpsteer within usable limits across the full range of motion. Rather than guessing at geometry, I built a parametric model that let me test changes quantitatively."] },
+        { h: "Kinematic Modeling", p: ["I built the suspension hardpoints as a fully parametric SolidWorks model, then ran Design Studies to sweep pickup point locations and measure the effect on key suspension metrics through the travel envelope. This turned suspension tuning into a data exercise — I could see exactly how a small change to a control arm mount shifted the camber curve before cutting any metal."] },
+        { h: "FEA Validation", p: ["I ran ANSYS Static Structural analysis on the fabricated components under worst-case off-road loading. The simulation flagged a weld seam as the primary stress concentration and predicted failure there."] }
+      ],
+      callout: { label: "Validated Result", text: "When the part was field-tested, it failed at the exact weld seam the simulation predicted. This is documented, real-world validation of the analysis — not just a render." },
+      stls: [
+        { name: "Control Arm", file: "models/suspension/control_arm.stl", desc: "Long-travel upper control arm." },
+        { name: "Spindle", file: "models/suspension/spindle.stl", desc: "Front spindle assembly." }
+      ]
+    },
+
+    {
+      id: "molle", num: "P-002", title: "MOLLE Panel System", tier: "top",
+      tags: ["Sheet Metal", "SolidWorks", "Fabrication"],
+      desc: "Modular MOLLE bed panel system for organized, reconfigurable gear storage in the truck bed. Sheet metal design optimized for laser cutting and bending.",
+      images: [],
+      specs: [
+        ["Type", "Sheet metal weldment"],
+        ["Software", "SolidWorks Sheet Metal"],
+        ["Output", "Flat patterns for laser + brake"]
+      ],
+      lead: "A modular MOLLE bed panel system that turns the truck bed into reconfigurable, organized storage. Designed as sheet metal so the parts go straight from CAD to laser and brake.",
+      prose: [
+        { h: "Concept", p: ["The bed needed organized, reconfigurable mounting for gear without permanent fixturing. MOLLE spacing gives a standard grid that accepts a huge range of off-the-shelf pouches and custom mounts."] },
+        { h: "Design for Manufacture", p: ["Everything was modeled in SolidWorks Sheet Metal so each panel unfolds to a clean flat pattern. Bend reliefs, hole spacing, and material thickness were chosen for standard laser-and-brake fabrication with no secondary operations."] }
+      ],
+      stls: [
+        { name: "MOLLE Panel", file: "models/molle/panel.stl", desc: "Single MOLLE bed panel." }
+      ]
+    },
+
+    {
+      id: "skidplates", num: "P-003", title: "Skid Plate System", tier: "top", isHub: true,
+      tags: ["Scan-to-CAD", "ANSYS FEA", "Iterative Design"],
+      desc: "A family of underbody skid plates protecting the engine, transmission, and transfer case. Each part went through a v1 that failed, FEA to find out why, and a v2 redesign.",
+      lead: "A family of underbody skid plates protecting the drivetrain. Every plate followed the same engineering arc — a v1 that broke in the field, an FEA study to find the root cause, and a v2 redesign driven by that analysis.",
+      images: [],
+      specs: [
+        ["Parts", "Engine, transmission, transfer case plates"],
+        ["Process", "Scan-to-CAD → fabricate → test → FEA → redesign"],
+        ["Software", "SolidWorks, MeshLab, ANSYS Mechanical"]
+      ],
+      prose: [
+        { h: "A System, Not One Part", p: ["Protecting the drivetrain meant a coordinated set of plates — engine, transmission, and transfer case — that share mounting strategy and material but each solve a different packaging problem. Pick a part below to see its full design history."] },
+        { h: "The Engineering Arc", p: ["Each plate started as a v1 that I fabricated and ran. When parts failed in the field, I didn't just make them thicker — I modeled the failure in ANSYS to understand the actual load path and stress concentration, then redesigned a v2 targeting the real problem. That loop is the whole point of this project."] }
+      ],
+      callout: { label: "Why This Matters", text: "A part that broke and was then properly re-engineered shows more than a part that simply exists. This is the design-build-test-redesign cycle in its clearest form." },
+      subParts: ["skid_engine", "skid_trans", "skid_transfer"],
+      stls: []
+    },
+
+    {
+      id: "packout", num: "P-004", title: "Milwaukee Packout Mount", tier: "top",
+      tags: ["SolidWorks", "ANSYS FEA", "Fabrication"],
+      desc: "Dedicated bed mount for the Milwaukee Packout system. Designed for secure, removable mounting with FEA-verified load capacity.",
+      lead: "A dedicated bed mount for the Milwaukee Packout modular tool box system — secure enough to trust on rough trails, removable when the bed is needed for other things.",
+      images: [],
+      specs: [
+        ["Software", "SolidWorks, ANSYS Mechanical"],
+        ["Mounting", "Removable, bed-anchored"],
+        ["Verification", "FEA load capacity check"]
+      ],
+      prose: [
+        { h: "Requirement", p: ["The Packout stack carries real weight and rides over rough terrain. The mount had to hold it securely under shock loading while still being removable by hand when the bed is needed for other cargo."] },
+        { h: "Design & Verification", p: ["Modeled in SolidWorks around the Packout's factory interface, then checked in ANSYS under worst-case vertical and lateral shock loads to confirm the mounting points and bracket geometry carry the load with margin."] }
+      ],
+      fea: { text: "ANSYS Static Structural analysis under shock loading confirmed the bracket and mounting points carry the full loaded Packout stack with margin, identifying the highest-stress regions for material focus.", image: "" },
+      stls: [
+        { name: "Packout Mount", file: "models/packout/mount.stl", desc: "Bed-anchored Packout bracket." }
+      ]
+    },
+
+    {
+      id: "rockslider", num: "P-005", title: "Rock Sliders", tier: "more",
+      tags: ["Weldments", "ANSYS FEA", "Fabrication"],
+      desc: "Bolt-on rock sliders for rocker panel protection, FEA-verified to support full vehicle weight as a jacking point.",
+      lead: "Bolt-on rock sliders protecting the rocker panels and doubling as a rated jacking point — verified in FEA to hold the truck's full weight.",
+      images: [],
+      specs: [
+        ["Type", "Tubular / plate weldment"],
+        ["Software", "SolidWorks, ANSYS Mechanical"],
+        ["Verification", "Full-vehicle-weight jacking load"]
+      ],
+      prose: [
+        { h: "Function", p: ["Rock sliders protect the rockers on the trail and serve as a structural jacking and recovery point, which means they have to carry the full weight of the truck at a single contact."] }
+      ],
+      fea: { text: "ANSYS analysis applied the full vehicle weight as a point load to simulate jacking off a single slider, confirming the weldment and frame mounts hold without yielding.", image: "" },
+      stls: [
+        { name: "Rock Slider", file: "models/rockslider/slider.stl", desc: "Driver-side rock slider weldment." }
+      ]
+    },
+
+    {
+      id: "winch", num: "P-006", title: "Winch Mount", tier: "more",
+      tags: ["Weldments", "ANSYS FEA", "Fabrication"],
+      desc: "Front winch mount weldment, FEA-verified for rated line pull loading.",
+      lead: "A front winch mount weldment designed and FEA-verified to carry rated winch line pull loads transmitted into the frame.",
+      images: [],
+      specs: [
+        ["Type", "Plate weldment"],
+        ["Software", "SolidWorks, ANSYS Mechanical"],
+        ["Verification", "Rated line-pull loading"]
+      ],
+      prose: [
+        { h: "Function", p: ["The winch mount transfers full rated line pull into the frame. Geometry and weld layout were designed to spread that load into the frame rails rather than concentrating it at the fasteners."] }
+      ],
+      fea: { text: "ANSYS Static Structural analysis applied rated line-pull loading to confirm the mount and its frame attachment carry the load with acceptable stress margins.", image: "" },
+      stls: [
+        { name: "Winch Mount", file: "models/winch/mount.stl", desc: "Front winch mount weldment." }
+      ]
+    },
+
+    /* ── SKID PLATE SUB-PARTS (each shows v1 → FEA → v2) ── */
+
+    {
+      id: "skid_engine", num: "P-003-A", title: "Engine Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 → v2"],
+      lead: "The front-most and most exposed skid plate, protecting the engine and oil pan. The v1 failed in the field; FEA showed why, and the v2 redesign fixed it.",
+      images: [],
+      specs: [
+        ["Protects", "Engine, oil pan"],
+        ["Software", "SolidWorks, MeshLab, ANSYS"],
+        ["Status", "v1 failed — v2 in progress"]
+      ],
+      prose: [
+        { h: "Scan-to-CAD Basis", p: ["Like all the plates, the engine skid was modeled against 3D scan data of the underbody so mounting points and clearances referenced the actual truck rather than nominal CAD."] }
+      ],
+      versions: [
+        { label: "v1", state: "failed", text: "The first version was fabricated and run hard. It deformed and cracked at the mounting tabs under repeated impact loading — the plate itself held, but the load path into the mounts was the weak link.", image: "" },
+        { label: "v2", state: "redesign", text: "The redesign reworked the mounting tab geometry and load path based directly on the FEA, spreading impact load into the frame instead of concentrating it at the tab welds. Currently in fabrication.", image: "" }
+      ],
+      fea: { text: "ANSYS Static Structural analysis of the v1 plate under impact loading located the stress concentration at the mounting tabs — matching exactly where the real part cracked. The simulation became the design brief for v2.", image: "" },
+      stls: [
+        { name: "Engine Skid v1", file: "models/skid/engine_v1.stl", desc: "Original engine skid plate." },
+        { name: "Engine Skid v2", file: "models/skid/engine_v2.stl", desc: "Redesigned engine skid plate." }
+      ]
+    },
+
+    {
+      id: "skid_trans", num: "P-003-B", title: "Transmission Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 → v2"],
+      lead: "Mid-body skid plate protecting the transmission. Same engineering arc — a v1 that failed, FEA to diagnose it, and a v2 redesign.",
+      images: [],
+      specs: [
+        ["Protects", "Transmission"],
+        ["Software", "SolidWorks, MeshLab, ANSYS"],
+        ["Status", "v1 failed — v2 in progress"]
+      ],
+      prose: [
+        { h: "Packaging", p: ["The transmission plate has to clear the crossmember and exhaust while still presenting a flat protective surface, which made its mounting strategy different from the engine plate."] }
+      ],
+      versions: [
+        { label: "v1", state: "failed", text: "The v1 transmission plate failed under trail loading, confirming the same mounting-tab weakness pattern seen across the early plates.", image: "" },
+        { label: "v2", state: "redesign", text: "The v2 applies the same load-path fix developed from the FEA, with revised mounts and reinforcement where the analysis showed peak stress. In progress.", image: "" }
+      ],
+      fea: { text: "ANSYS analysis identified the failure origin and quantified the stress reduction achieved by the revised mounting geometry, driving the v2 design.", image: "" },
+      stls: [
+        { name: "Trans Skid v1", file: "models/skid/trans_v1.stl", desc: "Original transmission skid plate." },
+        { name: "Trans Skid v2", file: "models/skid/trans_v2.stl", desc: "Redesigned transmission skid plate." }
+      ]
+    },
+
+    {
+      id: "skid_transfer", num: "P-003-C", title: "Transfer Case Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 → v2"],
+      lead: "Rear-most drivetrain skid plate protecting the transfer case. v1 failure, FEA diagnosis, v2 redesign.",
+      images: [],
+      specs: [
+        ["Protects", "Transfer case"],
+        ["Software", "SolidWorks, MeshLab, ANSYS"],
+        ["Status", "v1 failed — v2 in progress"]
+      ],
+      prose: [
+        { h: "Position", p: ["The transfer case plate sits at the rear of the protected drivetrain run and ties into the crossmember, completing the underbody armor."] }
+      ],
+      versions: [
+        { label: "v1", state: "failed", text: "The v1 transfer case plate failed consistently with the rest of the family, validating that the mounting approach — not the plate thickness — was the shared root cause.", image: "" },
+        { label: "v2", state: "redesign", text: "The v2 carries the corrected mounting design across the whole skid system for consistent, predictable load paths. In progress.", image: "" }
+      ],
+      fea: { text: "ANSYS confirmed the shared failure mode and verified the redesigned mounts resolve it, completing the analysis-driven redesign of the full skid plate system.", image: "" },
+      stls: [
+        { name: "Transfer Skid v1", file: "models/skid/transfer_v1.stl", desc: "Original transfer case skid plate." },
+        { name: "Transfer Skid v2", file: "models/skid/transfer_v2.stl", desc: "Redesigned transfer case skid plate." }
+      ]
+    }
+
+  ]
+};
+</script>
+<script>
+/* ════════════════ RENDER ENGINE — generates the site from SITE ════════════════ */
+
+const byId = {};
+SITE.projects.forEach(p => byId[p.id] = p);
+
+function pendingBox(label) {
+  return '<div class="img-pending"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="40" height="32" rx="2"/><path d="M4 32l10-10 8 8 6-6 16 14"/><circle cx="34" cy="18" r="4"/></svg><span>' + label + '</span></div>';
+}
+function firstImage(p) { return (p.images && p.images.length) ? p.images[0] : null; }
+
+// ── PORTRAIT ──
+function applyPortrait() {
+  if (!SITE.portrait) return;
+  document.getElementById('portrait-box').innerHTML = '<img src="' + SITE.portrait + '" alt="Michael Millan">';
+}
+
+// ── LANDING CARDS ──
+function renderCards() {
+  const grid = document.getElementById('projects-grid');
+  const top = SITE.projects.filter(p => p.tier === 'top');
+  grid.innerHTML = top.map(p => {
+    const img = firstImage(p);
+    const thumb = img ? '<img src="' + img + '" alt="">' : pendingBox(p.id);
+    const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+    return '<div class="project-card" id="card-' + p.id + '">' +
+      '<div class="project-card-head" onclick="toggleCard(\'' + p.id + '\')">' +
+        '<span class="project-num">' + p.num + '</span>' +
+        '<div class="project-thumb">' + thumb + '</div>' +
+        '<h3 class="project-title">' + p.title + ' <span class="chev">›</span></h3>' +
+        '<div class="project-tags">' + tags + '</div>' +
+      '</div>' +
+      '<div class="project-brief"><div class="project-brief-inner">' +
+        '<p class="project-desc">' + p.desc + '</p>' +
+        '<button class="project-viewmore" onclick="openDetail(\'' + p.id + '\')">View even more details</button>' +
+      '</div></div></div>';
+  }).join('');
+
+  // More Projects dropdown
+  const more = SITE.projects.filter(p => p.tier === 'more');
+  document.getElementById('more-list').innerHTML = more.map(p =>
+    '<div class="more-item" onclick="openDetail(\'' + p.id + '\')">' +
+      '<div><div class="more-item-name">' + p.title + '</div><div class="more-item-desc">' + (p.desc || '') + '</div></div>' +
+      '<span class="more-item-arrow">→</span></div>'
+  ).join('');
+  if (more.length === 0) document.getElementById('more-dropdown').style.display = 'none';
+}
+
+// accordion: only one open; click elsewhere closes all
+function toggleCard(id) {
+  const card = document.getElementById('card-' + id);
+  const wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.project-card').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) card.classList.add('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.project-card')) {
+    document.querySelectorAll('.project-card').forEach(c => c.classList.remove('open'));
+  }
+});
+function toggleMore() { document.getElementById('more-dropdown').classList.toggle('open'); }
+
+// ── DETAIL PAGES ──
+function renderDetailPages() {
+  const root = document.getElementById('detail-pages-root');
+  root.innerHTML = SITE.projects.map(p => buildDetailPage(p)).join('');
+}
+
+function buildDetailPage(p) {
+  const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+  const imgs = p.images || [];
+
+  // hero gallery
+  let heroMain, heroThumbs = '';
+  if (imgs.length) {
+    heroMain = '<img id="hero-img-' + p.id + '" src="' + imgs[0] + '" alt="">';
+    if (imgs.length > 1) {
+      heroMain += '<button class="hero-arrow prev" onclick="heroStep(\'' + p.id + '\',-1)">‹</button><button class="hero-arrow next" onclick="heroStep(\'' + p.id + '\',1)">›</button>';
+      heroThumbs = '<div class="hero-thumbs" id="hero-thumbs-' + p.id + '">' +
+        imgs.map((src, i) => '<div class="hero-thumb' + (i === 0 ? ' active' : '') + '" onclick="heroSet(\'' + p.id + '\',' + i + ')"><img src="' + src + '" alt=""></div>').join('') + '</div>';
+    }
+  } else {
+    heroMain = pendingBox(p.id + '_01.jpg');
+  }
+
+  // specs
+  const specs = (p.specs || []).map(s => '<div class="spec-row"><span class="spec-key">' + s[0] + '</span><span class="spec-val">' + s[1] + '</span></div>').join('');
+
+  // prose
+  let prose = (p.prose || []).map(b => '<h3>' + b.h + '</h3>' + b.p.map(x => '<p>' + x + '</p>').join('')).join('');
+
+  // sub-parts hub list
+  if (p.subParts && p.subParts.length) {
+    const items = p.subParts.map(sid => {
+      const sp = byId[sid];
+      return '<div class="more-item" onclick="openDetail(\'' + sid + '\')" style="border-top:1px solid var(--border)"><div><div class="more-item-name">' + sp.title + '</div><div class="more-item-desc">' + (sp.lead || '').slice(0, 90) + '…</div></div><span class="more-item-arrow">→</span></div>';
+    }).join('');
+    prose += '<h3>Parts In This System</h3><div style="border:1px solid var(--border); background:var(--bg2); margin-top:0.5rem;">' + items + '</div>';
+  }
+
+  // versions (v1 -> fea -> v2 ordering handled here)
+  let versionsHtml = '';
+  if (p.versions && p.versions.length) {
+    p.versions.forEach(v => {
+      const vimg = v.image ? '<div class="fea-image"><img src="' + v.image + '" alt=""></div>' : '<div class="fea-image">' + pendingBox(p.id + '_' + v.label + '.jpg') + '</div>';
+      versionsHtml += '<h3><span class="version-badge ' + v.label + '">' + v.label.toUpperCase() + (v.state === 'failed' ? ' — Failed' : v.state === 'redesign' ? ' — Redesign' : '') + '</span></h3><p>' + v.text + '</p>' + vimg;
+      // insert FEA between v1 and v2
+      if (v.label === 'v1' && p.fea) {
+        const fimg = p.fea.image ? '<div class="fea-image"><img src="' + p.fea.image + '" alt=""></div>' : '<div class="fea-image">' + pendingBox(p.id + '_fea.jpg') + '</div>';
+        versionsHtml += '<h3>FEA — Root Cause</h3><p>' + p.fea.text + '</p>' + fimg;
+      }
+    });
+  }
+
+  // standalone FEA (projects without versions but with fea)
+  let feaHtml = '';
+  if (p.fea && (!p.versions || !p.versions.length)) {
+    const fimg = p.fea.image ? '<div class="fea-image"><img src="' + p.fea.image + '" alt=""></div>' : '<div class="fea-image">' + pendingBox(p.id + '_fea.jpg') + '</div>';
+    feaHtml = '<h3>FEA Analysis</h3><p>' + p.fea.text + '</p>' + fimg;
+  }
+
+  // callout
+  const callout = p.callout ? '<div class="callout"><div class="callout-label">' + p.callout.label + '</div><p>' + p.callout.text + '</p></div>' : '';
+
+  // gallery
+  let gallery;
+  if (imgs.length) {
+    gallery = imgs.map(src => '<img class="gallery-img" src="' + src + '" alt="" onclick="openLightbox(\'' + src + '\')">').join('');
+  } else {
+    gallery = '<div class="gallery-slot">' + pendingBox(p.id) + '</div><div class="gallery-slot">' + pendingBox(p.id) + '</div><div class="gallery-slot">' + pendingBox(p.id) + '</div>';
+  }
+
+  // viewer (scoped to this project's stls)
+  const vid = 'v_' + p.id;
+  let modelListHtml;
+  if (p.stls && p.stls.length) {
+    modelListHtml = p.stls.map((m, i) =>
+      '<div class="model-item" id="' + vid + '-item-' + i + '" onclick="VIEWERS[\'' + vid + '\'].load(' + i + ')"><div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div></div>'
+    ).join('');
+  } else {
+    modelListHtml = '<div class="model-empty">No STL models listed for this project yet. Add them to the stls array in the config.</div>';
+  }
+  const viewer =
+    '<div class="viewer-shell" data-viewer="' + vid + '">' +
+      '<div class="model-list"><div class="model-list-head">Models — ' + p.title + '</div><div class="model-list-scroll">' + modelListHtml + '</div></div>' +
+      '<div class="viewer-main">' +
+        '<div class="viewer-toolbar"><span class="viewer-toolbar-label">3D Model Viewer</span><span class="viewer-filename" data-fname="' + vid + '">No model loaded</span>' +
+          '<button class="viewer-btn" onclick="VIEWERS[\'' + vid + '\'].toggleWireframe()">Wireframe</button>' +
+          '<button class="viewer-btn" onclick="VIEWERS[\'' + vid + '\'].reset()">Reset View</button></div>' +
+        '<div class="viewer-canvas-wrap" data-canvaswrap="' + vid + '">' +
+          '<div class="viewer-empty" data-empty="' + vid + '"><svg viewBox="0 0 48 48" fill="none" stroke="#c8871a" stroke-width="1.2"><path d="M24 4l18 10v20L24 44 6 34V14z"/><path d="M24 4v40M6 14l18 10 18-10"/></svg><div class="viewer-empty-text">Select a model</div></div>' +
+          '<canvas data-canvas="' + vid + '"></canvas></div>' +
+        '<div class="viewer-status"><div class="status-dot" data-dot="' + vid + '"></div><span data-status="' + vid + '">Ready — choose a model</span></div>' +
+      '</div></div>';
+
+  const backTarget = p.hub ? p.hub : 'projects';
+  const backLabel = p.hub ? 'Back to ' + byId[p.hub].title : 'Back to projects';
+
+  return '<div class="page detail-page" id="page-' + p.id + '">' +
+    '<div class="detail-hero"><button class="detail-back" onclick="openDetail(\'' + (p.hub || '__projects') + '\')">' + backLabel + '</button>' +
+      '<div class="detail-hero-grid"><div>' +
+        '<div class="detail-page-num">' + p.num + '</div>' +
+        '<h1 class="detail-page-title">' + p.title + '</h1>' +
+        '<p class="detail-page-lead">' + p.lead + '</p>' +
+        '<div class="detail-page-tags">' + tags + '</div>' +
+      '</div><div class="hero-gallery"><div class="hero-main">' + heroMain + '</div>' + heroThumbs + '</div></div></div>' +
+    '<div class="detail-body-section"><div class="detail-layout">' +
+      '<div class="detail-specs-panel"><h4>Project Specs</h4>' + specs + '</div>' +
+      '<div class="detail-prose">' + prose + versionsHtml + feaHtml + callout + '</div>' +
+    '</div></div>' +
+    '<div class="detail-body-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">3D Models</h2><div class="section-line"></div></div>' + viewer + '</div>' +
+    '<div class="detail-gallery-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Documentation</h2><div class="section-line"></div></div>' +
+      '<div class="detail-gallery">' + gallery + '</div>' +
+      (imgs.length ? '' : '<p class="gallery-note">Add photo paths to this project\'s images array in the config to populate the gallery, hero, and card thumbnail.</p>') +
+    '</div></div>';
+}
+
+// ── HERO GALLERY ──
+const heroState = {};
+function heroSet(pid, i) {
+  const p = byId[pid]; if (!p.images || !p.images.length) return;
+  heroState[pid] = i;
+  document.getElementById('hero-img-' + pid).src = p.images[i];
+  const thumbs = document.querySelectorAll('#hero-thumbs-' + pid + ' .hero-thumb');
+  thumbs.forEach((t, ti) => t.classList.toggle('active', ti === i));
+}
+function heroStep(pid, dir) {
+  const p = byId[pid]; if (!p.images || !p.images.length) return;
+  let i = (heroState[pid] || 0) + dir;
+  if (i < 0) i = p.images.length - 1;
+  if (i >= p.images.length) i = 0;
+  heroSet(pid, i);
+}
+
+// ── ROUTING ──
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const t = document.getElementById('page-' + pageId);
+  if (t) t.classList.add('active');
+  window.scrollTo(0, 0);
+}
+function openDetail(id) {
+  if (id === '__projects') { navTo('projects'); return; }
+  showPage(id);
+  const vid = 'v_' + id;
+  if (VIEWERS[vid]) setTimeout(() => VIEWERS[vid].resize(), 60);
+}
+function navTo(target) {
+  const homeSections = ['about', 'projects', 'viewer', 'contact'];
+  if (homeSections.includes(target)) {
+    showPage('home');
+    setTimeout(() => { const el = document.getElementById(target); if (el) el.scrollIntoView({ behavior: 'smooth' }); if (VIEWERS.home) VIEWERS.home.resize(); }, 50);
+  } else { openDetail(target); }
+}
+function goHome() { showPage('home'); window.scrollTo(0, 0); setTimeout(() => { if (VIEWERS.home) VIEWERS.home.resize(); }, 50); }
+
+// ── LIGHTBOX ──
+function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+/* ════════════════ SHARED STL VIEWER ENGINE ════════════════ */
+function parseSTL(buffer) {
+  const text = new TextDecoder().decode(new Uint8Array(buffer, 0, 80));
+  if (text.startsWith('solid') && !isBinarySTL(buffer)) return parseASCIISTL(new TextDecoder().decode(buffer));
+  return parseBinarySTL(buffer);
+}
+function isBinarySTL(buffer) { const d = new DataView(buffer); if (buffer.byteLength < 84) return false; return buffer.byteLength === 84 + d.getUint32(80, true) * 50; }
+function parseBinarySTL(buffer) {
+  const data = new DataView(buffer); const n = data.getUint32(80, true);
+  const pos = new Float32Array(n * 9), nor = new Float32Array(n * 9); let o = 84;
+  for (let i = 0; i < n; i++) { const nx = data.getFloat32(o, true), ny = data.getFloat32(o+4, true), nz = data.getFloat32(o+8, true); o += 12;
+    for (let v = 0; v < 3; v++) { pos[i*9+v*3]=data.getFloat32(o,true); pos[i*9+v*3+1]=data.getFloat32(o+4,true); pos[i*9+v*3+2]=data.getFloat32(o+8,true); nor[i*9+v*3]=nx; nor[i*9+v*3+1]=ny; nor[i*9+v*3+2]=nz; o += 12; } o += 2; }
+  return { positions: pos, normals: nor };
+}
+function parseASCIISTL(text) {
+  const lines = text.split('\n'); const pos = [], nor = []; let nx=0,ny=0,nz=0;
+  for (const line of lines) { const t = line.trim();
+    if (t.startsWith('facet normal')) { const q = t.split(/\s+/); nx=parseFloat(q[2]); ny=parseFloat(q[3]); nz=parseFloat(q[4]); }
+    else if (t.startsWith('vertex')) { const q = t.split(/\s+/); pos.push(parseFloat(q[1]),parseFloat(q[2]),parseFloat(q[3])); nor.push(nx,ny,nz); } }
+  return { positions: new Float32Array(pos), normals: new Float32Array(nor) };
+}
+
+const VIEWERS = {};
+
+function makeViewer(vid, stls) {
+  const canvas = document.querySelector('[data-canvas="' + vid + '"]');
+  const wrap = document.querySelector('[data-canvaswrap="' + vid + '"]');
+  if (!canvas || !wrap) return null;
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x141410);
+  let w = wrap.clientWidth || 600, h = wrap.clientHeight || 480;
+  const camera = new THREE.PerspectiveCamera(45, w / h, 0.01, 100000);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(w, h);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const d1 = new THREE.DirectionalLight(0xffffff, 0.8); d1.position.set(1, 2, 3); scene.add(d1);
+  const d2 = new THREE.DirectionalLight(0xc8871a, 0.3); d2.position.set(-2, -1, -1); scene.add(d2);
+
+  let mesh = null, wireframe = false;
+  let isDown = false, isRight = false, lastX, lastY;
+  const sph = { theta: 0.4, phi: 1.0, r: 5 };
+  const target = new THREE.Vector3(0, 0, 0);
+  function update() {
+    camera.position.set(
+      target.x + sph.r * Math.sin(sph.phi) * Math.sin(sph.theta),
+      target.y + sph.r * Math.cos(sph.phi),
+      target.z + sph.r * Math.sin(sph.phi) * Math.cos(sph.theta));
+    camera.lookAt(target);
+  }
+  update();
+
+  canvas.addEventListener('mousedown', e => { isDown = true; isRight = e.button === 2; lastX = e.clientX; lastY = e.clientY; });
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
+  canvas.addEventListener('mouseup', () => isDown = false);
+  canvas.addEventListener('mouseleave', () => isDown = false);
+  canvas.addEventListener('mousemove', e => {
+    if (!isDown) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY; lastX = e.clientX; lastY = e.clientY;
+    if (isRight) { const r = new THREE.Vector3(), up = new THREE.Vector3(0,1,0); r.crossVectors(camera.getWorldDirection(new THREE.Vector3()), up).normalize(); target.addScaledVector(r, -dx*0.003*sph.r); target.addScaledVector(up, dy*0.003*sph.r); }
+    else { sph.theta -= dx*0.008; sph.phi = Math.max(0.1, Math.min(Math.PI-0.1, sph.phi + dy*0.008)); }
+    update();
+  });
+  canvas.addEventListener('wheel', e => { e.preventDefault(); sph.r = Math.max(0.01, sph.r*(1+e.deltaY*0.001)); update(); }, { passive: false });
+  let ltd = 0;
+  canvas.addEventListener('touchstart', e => { if (e.touches.length===1){isDown=true;isRight=false;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;} else if(e.touches.length===2){isDown=false;ltd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);} }, { passive: true });
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); if(e.touches.length===1&&isDown){const dx=e.touches[0].clientX-lastX,dy=e.touches[0].clientY-lastY;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;sph.theta-=dx*0.008;sph.phi=Math.max(0.1,Math.min(Math.PI-0.1,sph.phi+dy*0.008));update();}else if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);sph.r=Math.max(0.01,sph.r*(ltd/d));ltd=d;update();} }, { passive: false });
+  canvas.addEventListener('touchend', () => isDown = false, { passive: true });
+
+  let raf;
+  function animate() { raf = requestAnimationFrame(animate); renderer.render(scene, camera); }
+  animate();
+
+  function setStatus(txt, active) {
+    const s = document.querySelector('[data-status="' + vid + '"]'); if (s) s.textContent = txt;
+    const dot = document.querySelector('[data-dot="' + vid + '"]'); if (dot) dot.classList.toggle('active', !!active);
+  }
+
+  const api = {
+    load(i) {
+      const m = stls[i]; if (!m) return;
+      document.querySelectorAll('[data-viewer="' + vid + '"] .model-item').forEach(el => el.classList.remove('active'));
+      const item = document.getElementById(vid + '-item-' + i); if (item) item.classList.add('active');
+      setStatus('Loading ' + m.name + '...', false);
+      fetch(m.file).then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then(buf => {
+        const { positions, normals } = parseSTL(buf);
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geo.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+        if (mesh) scene.remove(mesh);
+        const mat = new THREE.MeshPhongMaterial({ color: 0x8a8a7a, specular: 0x333330, shininess: 40, side: THREE.DoubleSide });
+        mesh = new THREE.Mesh(geo, mat); scene.add(mesh);
+        geo.computeBoundingBox(); const c = new THREE.Vector3(); geo.boundingBox.getCenter(c); mesh.position.sub(c);
+        const sz = new THREE.Vector3(); geo.boundingBox.getSize(sz); const md = Math.max(sz.x, sz.y, sz.z) || 1;
+        sph.r = md * 2; target.set(0,0,0); sph.theta = 0.4; sph.phi = 1.0; update();
+        const empty = document.querySelector('[data-empty="' + vid + '"]'); if (empty) empty.style.display = 'none';
+        const fn = document.querySelector('[data-fname="' + vid + '"]'); if (fn) fn.textContent = m.name;
+        wireframe = false;
+        setStatus('Loaded — ' + (positions.length/9).toLocaleString() + ' triangles — ' + m.name, true);
+      }).catch(() => setStatus('Could not load ' + m.file + ' — file not found yet (works once hosted with the models/ folder)', false));
+    },
+    toggleWireframe() { if (!mesh) return; wireframe = !wireframe; mesh.material.wireframe = wireframe; },
+    reset() { sph.theta = 0.4; sph.phi = 1.0; target.set(0,0,0); update(); },
+    resize() { const nw = wrap.clientWidth, nh = wrap.clientHeight; if (nw === 0) return; camera.aspect = nw/nh; camera.updateProjectionMatrix(); renderer.setSize(nw, nh); }
+  };
+  return api;
+}
+
+// ── BOOT ──
+applyPortrait();
+renderCards();
+renderDetailPages();
+
+// build a viewer per project + the home viewer (home = all stls combined)
+window.addEventListener('load', () => {
+  // home viewer: aggregate all stls, with project tag in desc
+  const homeStls = [];
+  SITE.projects.forEach(p => (p.stls || []).forEach(s => homeStls.push(Object.assign({ _proj: p.id }, s))));
+  // render home list
+  const homeList = document.getElementById('home-model-list');
+  if (homeStls.length) {
+    homeList.innerHTML = homeStls.map((m, i) => {
+      const proj = byId[m._proj];
+      const link = '<a class="model-item-link" onclick="event.stopPropagation(); openDetail(\'' + m._proj + '\')">↳ ' + proj.title + '</a>';
+      return '<div class="model-item" id="v_home-item-' + i + '" onclick="VIEWERS.home.load(' + i + ')"><div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div>' + link + '</div>';
+    }).join('');
+  } else {
+    homeList.innerHTML = '<div class="model-empty">No models configured yet.</div>';
+  }
+  // fix home viewer canvas selectors (uses data-canvas="home")
+  VIEWERS.home = makeViewer("home", homeStls);
+
+  SITE.projects.forEach(p => {
+    const vid = 'v_' + p.id;
+    VIEWERS[vid] = makeViewer(vid, p.stls || []);
+  });
+});
+
+</script>
+</body>
+</html>
