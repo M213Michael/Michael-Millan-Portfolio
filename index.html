@@ -87,18 +87,15 @@
   .project-viewmore::after { content: '→'; transition: transform 0.2s; }
   .project-viewmore:hover::after { transform: translateX(4px); }
 
-  .more-dropdown { margin-top: 1.5px; background: var(--bg); }
-  .more-toggle { width: 100%; padding: 1.5rem 2rem; background: var(--bg); border: none; border-top: 1px solid var(--border); color: var(--text); font-family: var(--condensed); font-size: 1.2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: background 0.2s; }
-  .more-toggle:hover { background: var(--bg3); }
-  .more-toggle .chev { color: var(--amber); transition: transform 0.25s; margin-left: auto; }
-  .more-dropdown.open .more-toggle .chev { transform: rotate(90deg); }
-  .more-list { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg2); }
-  .more-dropdown.open .more-list { max-height: 800px; }
-  .more-item { padding: 1.25rem 2rem; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s; }
-  .more-item:hover { background: var(--bg3); }
-  .more-item-name { font-family: var(--condensed); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
-  .more-item-desc { font-size: 12px; font-weight: 300; color: var(--text2); }
-  .more-item-arrow { margin-left: auto; color: var(--amber); font-family: var(--mono); font-size: 12px; }
+  .show-more-btn { background: transparent; border: 1px solid var(--border2); padding: 12px 28px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text2); cursor: pointer; transition: all 0.2s; }
+  .show-more-btn:hover { border-color: var(--amber); color: var(--amber); }
+  .sub-list { border: 1px solid var(--border); background: var(--bg2); margin-top: 0.5rem; }
+  .sub-item { padding: 1.1rem 1.25rem; border-top: 1px solid var(--border); cursor: pointer; display: flex; align-items: center; gap: 1rem; transition: background 0.2s; }
+  .sub-item:first-child { border-top: none; }
+  .sub-item:hover { background: var(--bg3); }
+  .sub-item-name { font-family: var(--condensed); font-size: 1.1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+  .sub-item-desc { font-size: 12px; font-weight: 300; color: var(--text2); }
+  .sub-item-arrow { margin-left: auto; color: var(--amber); font-family: var(--mono); font-size: 12px; }
 
   .detail-page { padding-top: 56px; }
   .detail-hero { padding: 5rem 3rem 3rem; border-bottom: 1px solid var(--border); }
@@ -145,6 +142,14 @@
 
   .fea-image { margin: 1.5rem 0; border: 1px solid var(--border2); background: var(--bg2); aspect-ratio: 16/9; overflow: hidden; max-width: 680px; }
   .fea-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fea-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin: 1.5rem 0; max-width: 680px; }
+  .fea-cell { margin: 0; border: 1px solid var(--border2); background: var(--bg2); overflow: hidden; }
+  .fea-cell img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; cursor: pointer; transition: opacity 0.2s; }
+  .fea-cell img:hover { opacity: 0.85; }
+  .fea-cell figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; color: var(--text3); text-transform: uppercase; padding: 6px 8px; border-top: 1px solid var(--border); }
+  .pdf-btn { display: inline-flex; align-items: center; gap: 8px; margin: 1rem 0 0.5rem; padding: 11px 20px; border: 1px solid var(--amber); background: var(--amber-dim); color: var(--amber); font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+  .pdf-btn:hover { background: rgba(200,135,26,0.25); }
+  .pdf-btn::before { content: '\2193'; }
 
   .detail-gallery-section { padding: 4rem 3rem; border-bottom: 1px solid var(--border); }
   .detail-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
@@ -266,9 +271,9 @@
   <section id="projects">
     <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Projects</h2><div class="section-line"></div></div>
     <div class="projects-grid" id="projects-grid"></div>
-    <div class="more-dropdown" id="more-dropdown">
-      <button class="more-toggle" onclick="toggleMore()">More Projects <span class="chev">›</span></button>
-      <div class="more-list" id="more-list"></div>
+    <div class="projects-grid" id="more-grid" style="margin-top:1.5px;"></div>
+    <div id="more-controls" style="text-align:center; padding-top:1.5rem;">
+      <button class="show-more-btn" id="show-more-btn" onclick="showMoreTiles()">Show more projects <span style="color:var(--amber)">+</span></button>
     </div>
   </section>
 
@@ -348,7 +353,8 @@
    ════════════════════════════════════════════════════════════════════ */
 
 const SITE = {
-  portrait: null,   // "images/portrait.jpg"
+  base: "Pictures",
+  portrait: { folder: "RockSliders", file: "selfie1.jpg" },  // you working on the rock sliders
 
   projects: [
 
@@ -356,7 +362,8 @@ const SITE = {
       id: "suspension", num: "P-001", title: "Long-Travel Suspension", tier: "top",
       tags: ["SolidWorks", "ANSYS FEA", "Kinematics"],
       desc: "Parametric suspension kinematic model with Design Study optimization, plus ANSYS validation that predicted a weld failure at the exact real-world location.",
-      images: [],   // "images/suspension/suspension_01.jpg", ...
+      folder: "Suspension",
+      images: ["Scan.jpg", "Scan1.jpg"],
       specs: [
         ["Vehicle", "2021 Ford F-150, 5.0 Coyote V8"],
         ["Software", "SolidWorks, ANSYS Mechanical"],
@@ -366,188 +373,271 @@ const SITE = {
       lead: "A parametric front suspension taken from kinematic model through FEA validation, using my 2021 F-150 as the test platform. The headline result: a simulation that predicted a weld failure at the exact location it later occurred in the real world.",
       prose: [
         { h: "Objective", p: ["The goal was a long-travel front suspension that maximized wheel travel for off-road use while keeping camber, caster, and bumpsteer within usable limits across the full range of motion. Rather than guessing at geometry, I built a parametric model that let me test changes quantitatively."] },
-        { h: "Kinematic Modeling", p: ["I built the suspension hardpoints as a fully parametric SolidWorks model, then ran Design Studies to sweep pickup point locations and measure the effect on key suspension metrics through the travel envelope. This turned suspension tuning into a data exercise — I could see exactly how a small change to a control arm mount shifted the camber curve before cutting any metal."] },
+        { h: "Kinematic Modeling", p: ["I built the suspension hardpoints as a fully parametric SolidWorks model, then ran Design Studies to sweep pickup point locations and measure the effect on key suspension metrics through the travel envelope. This turned suspension tuning into a data exercise."] },
         { h: "FEA Validation", p: ["I ran ANSYS Static Structural analysis on the fabricated components under worst-case off-road loading. The simulation flagged a weld seam as the primary stress concentration and predicted failure there."] }
       ],
-      callout: { label: "Validated Result", text: "When the part was field-tested, it failed at the exact weld seam the simulation predicted. This is documented, real-world validation of the analysis — not just a render." },
-      stls: [
-        { name: "Control Arm", file: "models/suspension/control_arm.stl", desc: "Long-travel upper control arm." },
-        { name: "Spindle", file: "models/suspension/spindle.stl", desc: "Front spindle assembly." }
-      ]
-    },
-
-    {
-      id: "molle", num: "P-002", title: "MOLLE Panel System", tier: "top",
-      tags: ["Sheet Metal", "SolidWorks", "Fabrication"],
-      desc: "Modular MOLLE bed panel system for organized, reconfigurable gear storage in the truck bed. Sheet metal design optimized for laser cutting and bending.",
-      images: [],
-      specs: [
-        ["Type", "Sheet metal weldment"],
-        ["Software", "SolidWorks Sheet Metal"],
-        ["Output", "Flat patterns for laser + brake"]
-      ],
-      lead: "A modular MOLLE bed panel system that turns the truck bed into reconfigurable, organized storage. Designed as sheet metal so the parts go straight from CAD to laser and brake.",
-      prose: [
-        { h: "Concept", p: ["The bed needed organized, reconfigurable mounting for gear without permanent fixturing. MOLLE spacing gives a standard grid that accepts a huge range of off-the-shelf pouches and custom mounts."] },
-        { h: "Design for Manufacture", p: ["Everything was modeled in SolidWorks Sheet Metal so each panel unfolds to a clean flat pattern. Bend reliefs, hole spacing, and material thickness were chosen for standard laser-and-brake fabrication with no secondary operations."] }
-      ],
-      stls: [
-        { name: "MOLLE Panel", file: "models/molle/panel.stl", desc: "Single MOLLE bed panel." }
-      ]
-    },
-
-    {
-      id: "skidplates", num: "P-003", title: "Skid Plate System", tier: "top", isHub: true,
-      tags: ["Scan-to-CAD", "ANSYS FEA", "Iterative Design"],
-      desc: "A family of underbody skid plates protecting the engine, transmission, and transfer case. Each part went through a v1 that failed, FEA to find out why, and a v2 redesign.",
-      lead: "A family of underbody skid plates protecting the drivetrain. Every plate followed the same engineering arc — a v1 that broke in the field, an FEA study to find the root cause, and a v2 redesign driven by that analysis.",
-      images: [],
-      specs: [
-        ["Parts", "Engine, transmission, transfer case plates"],
-        ["Process", "Scan-to-CAD → fabricate → test → FEA → redesign"],
-        ["Software", "SolidWorks, MeshLab, ANSYS Mechanical"]
-      ],
-      prose: [
-        { h: "A System, Not One Part", p: ["Protecting the drivetrain meant a coordinated set of plates — engine, transmission, and transfer case — that share mounting strategy and material but each solve a different packaging problem. Pick a part below to see its full design history."] },
-        { h: "The Engineering Arc", p: ["Each plate started as a v1 that I fabricated and ran. When parts failed in the field, I didn't just make them thicker — I modeled the failure in ANSYS to understand the actual load path and stress concentration, then redesigned a v2 targeting the real problem. That loop is the whole point of this project."] }
-      ],
-      callout: { label: "Why This Matters", text: "A part that broke and was then properly re-engineered shows more than a part that simply exists. This is the design-build-test-redesign cycle in its clearest form." },
-      subParts: ["skid_engine", "skid_trans", "skid_transfer"],
+      callout: { label: "Validated Result", text: "When the part was field-tested, it failed at the exact weld seam the simulation predicted. This is documented, real-world validation of the analysis, not just a render." },
       stls: []
     },
 
     {
-      id: "packout", num: "P-004", title: "Milwaukee Packout Mount", tier: "top",
-      tags: ["SolidWorks", "ANSYS FEA", "Fabrication"],
-      desc: "Dedicated bed mount for the Milwaukee Packout system. Designed for secure, removable mounting with FEA-verified load capacity.",
-      lead: "A dedicated bed mount for the Milwaukee Packout modular tool box system — secure enough to trust on rough trails, removable when the bed is needed for other things.",
-      images: [],
+      id: "molle", num: "P-002", title: "MOLLE Panel System", tier: "top",
+      tags: ["Sheet Metal", "SolidWorks", "Scan-to-CAD"],
+      desc: "Modular MOLLE bed panel system with a full library of printed mounts, modeled from scan data as sheet metal for clean laser-and-brake fabrication.",
+      folder: "MollePanel",
+      images: ["MP1.png", "MP2.png", "MP3.png", "MP4.png", "MP5.png", "MP6.png", "MP7.png", "MP8.png", "MPScan.jpg", "Install.jpg"],
       specs: [
-        ["Software", "SolidWorks, ANSYS Mechanical"],
-        ["Mounting", "Removable, bed-anchored"],
-        ["Verification", "FEA load capacity check"]
+        ["Type", "Sheet metal panel + mount library"],
+        ["Software", "SolidWorks Sheet Metal"],
+        ["Basis", "3D scan of bed area"],
+        ["Output", "Flat patterns + printed mounts"]
       ],
+      lead: "A modular MOLLE bed panel system that turns the truck bed into reconfigurable, organized storage, backed by a growing library of custom mounts for specific gear. Modeled from scan data and built as sheet metal so the panels go straight from CAD to laser and brake.",
       prose: [
-        { h: "Requirement", p: ["The Packout stack carries real weight and rides over rough terrain. The mount had to hold it securely under shock loading while still being removable by hand when the bed is needed for other cargo."] },
-        { h: "Design & Verification", p: ["Modeled in SolidWorks around the Packout's factory interface, then checked in ANSYS under worst-case vertical and lateral shock loads to confirm the mounting points and bracket geometry carry the load with margin."] }
+        { h: "Concept", p: ["The bed needed organized, reconfigurable mounting for gear without permanent fixturing. MOLLE spacing gives a standard grid that accepts a wide range of off-the-shelf pouches and the custom mounts I designed around it."] },
+        { h: "Scan to Sheet Metal", p: ["I scanned the bed area to capture the real mounting surfaces, then modeled the panels in SolidWorks Sheet Metal so each one unfolds to a clean flat pattern with correct bend reliefs and hole spacing for standard fabrication."] },
+        { h: "Mount Library", p: ["On top of the panels I designed a family of purpose-built mounts, each solving a specific stowage problem: hi-lift jack, recovery hitch, fuel and water jugs, a Jackery power station, flag, QuickFist clamps, and more. Browse them in the model viewer below."] }
       ],
-      fea: { text: "ANSYS Static Structural analysis under shock loading confirmed the bracket and mounting points carry the full loaded Packout stack with margin, identifying the highest-stress regions for material focus.", image: "" },
       stls: [
-        { name: "Packout Mount", file: "models/packout/mount.stl", desc: "Bed-anchored Packout bracket." }
+        { name: "Clip", file: "Clip.STL", desc: "MOLLE attachment clip." },
+        { name: "Flag Mount", file: "FlagMount.STL", desc: "Flag pole mount." },
+        { name: "Hi-Lift Mount", file: "HiliftMount.STL", desc: "Hi-Lift jack mount." },
+        { name: "Hitch Mount", file: "HitchMount.STL", desc: "Hitch mount." },
+        { name: "Jackery Mount", file: "JackeryMount.STL", desc: "Jackery power station mount." },
+        { name: "Jug Mount", file: "JugMount.STL", desc: "Fuel / water jug mount." },
+        { name: "QuickFist Long", file: "QuickFist Long.STL", desc: "Long QuickFist clamp mount." },
+        { name: "QuickFist Riser", file: "QuickFistRiser1.STL", desc: "QuickFist riser." },
+        { name: "Recovery Hitch", file: "RecoveryHitch.STL", desc: "Recovery hitch mount." }
       ]
     },
 
     {
-      id: "rockslider", num: "P-005", title: "Rock Sliders", tier: "more",
+      id: "electrical", num: "P-003", title: "Electrical & Accessories", tier: "top",
+      tags: ["12V Systems", "SolidWorks", "Integration"],
+      desc: "Designed mounts and integration hardware for the truck's electrical system, starting with the AUX Beam control box mount. More component mounts coming soon.",
+      folder: "Electrical",
+      images: ["ABMount.png"],
+      specs: [
+        ["Control", "AUX Beam 8-gang switch panel"],
+        ["Air System", "Maddox 3.0 CFM, frame hard line, bulkhead fitting"],
+        ["Wiring", "14 AWG, Wago 221 distribution, fuse tap"],
+        ["Status", "More electronics mounts in progress"]
+      ],
+      lead: "The electrical and accessory system for the truck, including custom-designed mounts for the control hardware. This project is growing as I design and print mounts for more components.",
+      prose: [
+        { h: "Control Box Mount", p: ["I designed a dedicated mount for the AUX Beam control box so the controller sits cleanly and securely rather than hanging on its harness. It is modeled in SolidWorks and printed to fit the install location exactly."] },
+        { h: "System Overview", p: ["All accessory loads run through the AUX Beam 8-gang panel, fed off the factory fuse block with a fuse tap and distributed through Wago 221 lever-nut connectors for a serviceable, solder-free bus. An onboard Maddox 3.0 CFM compressor is plumbed through a frame hard line to an external quick-connect near the fuel door."] },
+        { h: "Coming Soon", p: ["More component mounts are in progress and will be added here as they are designed and tested."] }
+      ],
+      stls: [
+        { name: "AUX Beam Control Box Mount", file: "AuxBeamControlBoxMount.STL", desc: "Mount for the AUX Beam control box." }
+      ]
+    },
+
+    {
+      id: "skidplates", num: "P-004", title: "Skid Plate System", tier: "top", isHub: true,
+      tags: ["Scan-to-CAD", "ANSYS FEA", "Iterative Design"],
+      desc: "A family of underbody skid plates protecting the engine, transmission, and transfer case. Each part went through a v1 that failed, FEA to find out why, and a v2 redesign.",
+      folder: "",
+      images: ["UnderSide.png"],
+      reportPdf: { folder: "SkidPlateEngine", file: "FEAAnalysisSkidPlateReport.pdf", label: "View FEA Report (PDF)" },
+      lead: "A family of underbody skid plates protecting the drivetrain. Every plate followed the same engineering arc: a v1 that broke in the field, an FEA study to find the root cause, and a v2 redesign driven by that analysis.",
+      specs: [
+        ["Parts", "Engine, transmission, transfer case plates"],
+        ["Process", "Scan-to-CAD, fabricate, test, FEA, redesign"],
+        ["Software", "SolidWorks, MeshLab, ANSYS Mechanical"]
+      ],
+      prose: [
+        { h: "A System, Not One Part", p: ["Protecting the drivetrain meant a coordinated set of plates, engine, transmission, and transfer case, that share mounting strategy and material but each solve a different packaging problem. Pick a part below to see its full design history."] },
+        { h: "The Engineering Arc", p: ["Each plate started as a v1 that I fabricated and ran. When parts failed in the field, I did not just make them thicker. I modeled the failure in ANSYS to understand the actual load path and stress concentration, then redesigned a v2 targeting the real problem."] }
+      ],
+      callout: { label: "Why This Matters", text: "A part that broke and was then properly re-engineered shows more than a part that simply exists. This is the design, build, test, redesign cycle in its clearest form." },
+      subParts: ["skid_engine", "skid_trans", "skid_transfer"],
+      hubStls: true,
+      stls: []
+    },
+
+    {
+      id: "packout", num: "P-005", title: "Milwaukee Packout Mount", tier: "top",
+      tags: ["SolidWorks", "ANSYS FEA", "Fatigue", "v1 to v2"],
+      desc: "A bed mount for the Milwaukee Packout system that failed in service from cold welds. I rewelded it, added a stiffener, and used FEA to confirm the fatigue root cause.",
+      folder: "Packout",
+      images: ["fab.jpg", "fab1.jpg", "MP3.png"],
+      stlFolder: "MollePanel",
+      lead: "A dedicated bed mount for the Milwaukee Packout modular tool box system. It failed in service, and the interesting part is why: a fatigue failure traced back to cold welds. I repaired it, added a stiffener, and ran FEA to confirm the root cause.",
+      specs: [
+        ["Software", "SolidWorks, ANSYS Mechanical"],
+        ["Mounting", "Bed-anchored"],
+        ["Failure Mode", "Fatigue from cold welds"],
+        ["Fix", "Reweld + added stiffener"]
+      ],
+      prose: [
+        { h: "The Build", p: ["The mount holds the Milwaukee Packout stack in the bed and has to survive constant vibration and shock loading on rough roads. The first version was fabricated and put into service carrying the full loaded stack."] }
+      ],
+      versions: [
+        { label: "v1", state: "failed", text: "The original mount failed in service. The cracking pattern pointed to a fatigue failure rather than a single overload event, which sent me looking at the welds as the likely origin.", image: "fab.jpg" },
+        { label: "v2", state: "redesign", text: "I rewelded the joint and added a small stiffener to reduce the cyclic stress at the failure location. The repair addressed both the workmanship issue and the stress concentration that let the crack start.", image: "fab1.jpg" }
+      ],
+      fea: {
+        text: "I ran ANSYS Static Structural analysis under vertical load, pull-out load, and combined loading to map the deformation and stress in the mount. The analysis confirmed that the original failure was a fatigue failure: my welds had run too cold, creating a weak fusion zone that became the crack initiation site under repeated loading. The stiffener lowers the cyclic stress at that location so the repaired mount holds up.",
+        images: [
+          { file: "PackoutTD.png", cap: "Total deformation" },
+          { file: "PackoutEQ.png", cap: "Equivalent stress" },
+          { file: "PackoutVertLoadTD.png", cap: "Vertical load — total deformation" },
+          { file: "PackoutPullOutTD.png", cap: "Pull-out load — total deformation" },
+          { file: "PackoutCombinedTD.png", cap: "Combined load — total deformation" }
+        ]
+      },
+      callout: { label: "Root Cause", text: "The failure was not the design carrying too little material. It was cold welds creating a weak fusion zone that fatigued under cyclic load. The fix targeted the actual cause: better welds plus a stiffener to cut the cyclic stress." },
+      stls: [
+        { name: "Packout Mount", file: "PackOutMountAnsys.STL", desc: "Packout mount analyzed in ANSYS." }
+      ]
+    },
+
+    {
+      id: "rockslider", num: "P-006", title: "Rock Sliders", tier: "more",
       tags: ["Weldments", "ANSYS FEA", "Fabrication"],
       desc: "Bolt-on rock sliders for rocker panel protection, FEA-verified to support full vehicle weight as a jacking point.",
-      lead: "Bolt-on rock sliders protecting the rocker panels and doubling as a rated jacking point — verified in FEA to hold the truck's full weight.",
-      images: [],
+      folder: "RockSliders",
+      images: ["Jack.jpg", "RSISO.png", "RSBottomISO.png", "Fab.jpg", "selfie1.jpg"],
       specs: [
-        ["Type", "Tubular / plate weldment"],
+        ["Type", "Tubular and plate weldment"],
         ["Software", "SolidWorks, ANSYS Mechanical"],
         ["Verification", "Full-vehicle-weight jacking load"]
       ],
+      lead: "Bolt-on rock sliders protecting the rocker panels and doubling as a rated jacking point, verified in FEA to hold the truck's full weight.",
       prose: [
-        { h: "Function", p: ["Rock sliders protect the rockers on the trail and serve as a structural jacking and recovery point, which means they have to carry the full weight of the truck at a single contact."] }
+        { h: "Function", p: ["Rock sliders protect the rockers on the trail and serve as a structural jacking and recovery point, which means they have to carry the full weight of the truck at a single contact."] },
+        { h: "Fabrication", p: ["The sliders were fabricated as a weldment and bolt to the frame, sized so they double as a confident jacking point off a single slider."] }
       ],
-      fea: { text: "ANSYS analysis applied the full vehicle weight as a point load to simulate jacking off a single slider, confirming the weldment and frame mounts hold without yielding.", image: "" },
+      fea: { text: "ANSYS analysis applied the full vehicle weight as a point load to simulate jacking off a single slider, confirming the weldment and frame mounts hold without yielding.", images: [] },
       stls: [
-        { name: "Rock Slider", file: "models/rockslider/slider.stl", desc: "Driver-side rock slider weldment." }
+        { name: "Rock Slider", file: "Slider.STL", desc: "Rock slider weldment." }
       ]
     },
 
     {
-      id: "winch", num: "P-006", title: "Winch Mount", tier: "more",
-      tags: ["Weldments", "ANSYS FEA", "Fabrication"],
-      desc: "Front winch mount weldment, FEA-verified for rated line pull loading.",
-      lead: "A front winch mount weldment designed and FEA-verified to carry rated winch line pull loads transmitted into the frame.",
-      images: [],
+      id: "winch", num: "P-007", title: "Winch Mount", tier: "more",
+      tags: ["Weldments", "SolidWorks", "ANSYS FEA"],
+      desc: "Front winch mount weldment with an integrated license plate holder, FEA-checked to carry rated line pull into the frame.",
+      folder: "Winch",
+      images: ["Winch1.png", "Winch2.jpg", "LP1.png"],
       specs: [
         ["Type", "Plate weldment"],
         ["Software", "SolidWorks, ANSYS Mechanical"],
+        ["Extra", "Integrated license plate holder"],
         ["Verification", "Rated line-pull loading"]
       ],
+      lead: "A front winch mount weldment designed to carry rated winch line pull into the frame, with an integrated license plate holder so the plate relocates cleanly with the winch.",
       prose: [
-        { h: "Function", p: ["The winch mount transfers full rated line pull into the frame. Geometry and weld layout were designed to spread that load into the frame rails rather than concentrating it at the fasteners."] }
+        { h: "Function", p: ["The winch mount transfers full rated line pull into the frame. Geometry and weld layout were designed to spread that load into the frame rails rather than concentrating it at the fasteners."] },
+        { h: "License Plate Integration", p: ["A relocated license plate holder is built into the mount so the plate stays visible and protected once the winch is installed."] }
       ],
-      fea: { text: "ANSYS Static Structural analysis applied rated line-pull loading to confirm the mount and its frame attachment carry the load with acceptable stress margins.", image: "" },
+      fea: { text: "ANSYS Static Structural analysis applied rated line-pull loading to confirm the mount and its frame attachment carry the load with acceptable stress margins. FEA result images coming soon.", images: [] },
       stls: [
-        { name: "Winch Mount", file: "models/winch/mount.stl", desc: "Front winch mount weldment." }
+        { name: "Winch Mount", file: "WinchMount.STL", desc: "Front winch mount weldment." },
+        { name: "License Plate Holder", file: "LicencePlateHolder.STL", desc: "Integrated plate holder." }
       ]
     },
 
-    /* ── SKID PLATE SUB-PARTS (each shows v1 → FEA → v2) ── */
+    {
+      id: "diffsteering", num: "P-008", title: "Diff & Steering Stabilizer", tier: "more",
+      tags: ["Scan-to-CAD", "SolidWorks", "Fabrication"],
+      desc: "A differential and steering stabilizer bracket developed from scan data of the front diff and steering components.",
+      folder: "OtherSmallProjects",
+      images: ["DiffScan.jpg", "DiffSteering1.png", "DiffSteering2.png"],
+      specs: [
+        ["Basis", "3D scan of front diff and steering"],
+        ["Software", "MeshLab, SolidWorks"],
+        ["Output", "Stabilizer bracket"]
+      ],
+      lead: "A differential and steering stabilizer bracket developed from scan data of the front differential and steering components, so the bracket fits the actual hardware.",
+      prose: [
+        { h: "Scan-to-CAD", p: ["I scanned the front differential and steering area and used the mesh in SolidWorks to design a stabilizer bracket that references the real geometry rather than nominal dimensions."] }
+      ],
+      stls: [
+        { name: "Diff Steering Stabilizer", file: "DiffSteeringStabalizer.STL", desc: "Steering stabilizer bracket." }
+      ]
+    },
+
+    /* ── SKID PLATE SUB-PARTS ── */
 
     {
-      id: "skid_engine", num: "P-003-A", title: "Engine Skid Plate", tier: "sub", hub: "skidplates",
-      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 → v2"],
+      id: "skid_engine", num: "P-004-A", title: "Engine Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 to v2"],
       lead: "The front-most and most exposed skid plate, protecting the engine and oil pan. The v1 failed in the field; FEA showed why, and the v2 redesign fixed it.",
-      images: [],
+      folder: "SkidPlateEngine",
+      images: ["SPEV1.jpg", "SPEV1-1.jpg", "SPEV1-3.png", "SPEV2.png", "SPEV2-1.png"],
+      reportPdf: { folder: "SkidPlateEngine", file: "FEAAnalysisSkidPlateReport.pdf", label: "View FEA Report (PDF)" },
       specs: [
         ["Protects", "Engine, oil pan"],
         ["Software", "SolidWorks, MeshLab, ANSYS"],
-        ["Status", "v1 failed — v2 in progress"]
+        ["Status", "v1 failed, v2 complete"]
       ],
       prose: [
         { h: "Scan-to-CAD Basis", p: ["Like all the plates, the engine skid was modeled against 3D scan data of the underbody so mounting points and clearances referenced the actual truck rather than nominal CAD."] }
       ],
       versions: [
-        { label: "v1", state: "failed", text: "The first version was fabricated and run hard. It deformed and cracked at the mounting tabs under repeated impact loading — the plate itself held, but the load path into the mounts was the weak link.", image: "" },
-        { label: "v2", state: "redesign", text: "The redesign reworked the mounting tab geometry and load path based directly on the FEA, spreading impact load into the frame instead of concentrating it at the tab welds. Currently in fabrication.", image: "" }
+        { label: "v1", state: "failed", text: "REPLACE WITH REAL STORY. These are the real-world failure photos of the v1 engine skid plate. Describe exactly what broke and where.", images: ["SPEFail.jpg", "SPEFail1.jpg", "SPEFail2.jpg", "SPEFail3.jpg"] },
+        { label: "v2", state: "redesign", text: "REPLACE WITH REAL STORY. Describe what changed in v2 and why, based on the FEA.", images: ["SPEV2.png"] }
       ],
-      fea: { text: "ANSYS Static Structural analysis of the v1 plate under impact loading located the stress concentration at the mounting tabs — matching exactly where the real part cracked. The simulation became the design brief for v2.", image: "" },
+      fea: {
+        text: "ANSYS Static Structural analysis of the engine skid plate. Full write-up in the FEA report PDF above.",
+        images: [
+          { file: "SPETDMid.png", cap: "Total deformation — mid" },
+          { file: "SPETDC.png", cap: "Total deformation — corner" }
+        ]
+      },
       stls: [
-        { name: "Engine Skid v1", file: "models/skid/engine_v1.stl", desc: "Original engine skid plate." },
-        { name: "Engine Skid v2", file: "models/skid/engine_v2.stl", desc: "Redesigned engine skid plate." }
+        { name: "Engine Skid v1", file: "SPEV1.STL", desc: "Original engine skid plate." },
+        { name: "Engine Skid v2", file: "SPEV2.STL", desc: "Redesigned engine skid plate." }
       ]
     },
 
     {
-      id: "skid_trans", num: "P-003-B", title: "Transmission Skid Plate", tier: "sub", hub: "skidplates",
-      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 → v2"],
-      lead: "Mid-body skid plate protecting the transmission. Same engineering arc — a v1 that failed, FEA to diagnose it, and a v2 redesign.",
-      images: [],
+      id: "skid_trans", num: "P-004-B", title: "Transmission Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 to v2"],
+      lead: "Mid-body skid plate protecting the transmission. Same engineering arc: a v1 that failed, FEA to diagnose it, and a v2 redesign.",
+      folder: "SkidPlateTransmision",
+      images: ["SPTV1-1.jpg", "SPTv1-2.png", "SPTv1-3.png", "SPTV1-4.jpg", "SPTv2-1.png", "SPTV2-2.png"],
       specs: [
         ["Protects", "Transmission"],
         ["Software", "SolidWorks, MeshLab, ANSYS"],
-        ["Status", "v1 failed — v2 in progress"]
+        ["Status", "v1 failed, v2 complete"]
       ],
       prose: [
         { h: "Packaging", p: ["The transmission plate has to clear the crossmember and exhaust while still presenting a flat protective surface, which made its mounting strategy different from the engine plate."] }
       ],
       versions: [
-        { label: "v1", state: "failed", text: "The v1 transmission plate failed under trail loading, confirming the same mounting-tab weakness pattern seen across the early plates.", image: "" },
-        { label: "v2", state: "redesign", text: "The v2 applies the same load-path fix developed from the FEA, with revised mounts and reinforcement where the analysis showed peak stress. In progress.", image: "" }
+        { label: "v1", state: "failed", text: "REPLACE WITH REAL STORY. Describe how the v1 transmission plate failed and where.", images: ["SPTV1-1.jpg", "SPTv1-2.png"] },
+        { label: "v2", state: "redesign", text: "REPLACE WITH REAL STORY. Describe the v2 changes driven by the FEA.", images: ["SPTv2-1.png", "SPTV2-2.png"] }
       ],
-      fea: { text: "ANSYS analysis identified the failure origin and quantified the stress reduction achieved by the revised mounting geometry, driving the v2 design.", image: "" },
+      fea: { text: "REPLACE WITH REAL FEA NOTES. ANSYS analysis identified the failure origin and quantified the improvement from the revised design.", images: [] },
       stls: [
-        { name: "Trans Skid v1", file: "models/skid/trans_v1.stl", desc: "Original transmission skid plate." },
-        { name: "Trans Skid v2", file: "models/skid/trans_v2.stl", desc: "Redesigned transmission skid plate." }
+        { name: "Trans Skid v1", file: "SkidPlateTransmisionFormed.STL", desc: "Original transmission skid plate." },
+        { name: "Trans Skid v2", file: "SkidPlateTransmisionFormedV2.STL", desc: "Redesigned transmission skid plate." }
       ]
     },
 
     {
-      id: "skid_transfer", num: "P-003-C", title: "Transfer Case Skid Plate", tier: "sub", hub: "skidplates",
-      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 → v2"],
-      lead: "Rear-most drivetrain skid plate protecting the transfer case. v1 failure, FEA diagnosis, v2 redesign.",
-      images: [],
+      id: "skid_transfer", num: "P-004-C", title: "Transfer Case Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "SolidWorks", "v1"],
+      lead: "Rear-most drivetrain skid plate protecting the transfer case. v1 documented; FEA and v2 in progress.",
+      folder: "SkidPlateTransferCase",
+      images: ["SPTCv1-1.png", "SPTCV1-2.jpg"],
       specs: [
         ["Protects", "Transfer case"],
         ["Software", "SolidWorks, MeshLab, ANSYS"],
-        ["Status", "v1 failed — v2 in progress"]
+        ["Status", "v1 documented, v2 in progress"]
       ],
       prose: [
         { h: "Position", p: ["The transfer case plate sits at the rear of the protected drivetrain run and ties into the crossmember, completing the underbody armor."] }
       ],
       versions: [
-        { label: "v1", state: "failed", text: "The v1 transfer case plate failed consistently with the rest of the family, validating that the mounting approach — not the plate thickness — was the shared root cause.", image: "" },
-        { label: "v2", state: "redesign", text: "The v2 carries the corrected mounting design across the whole skid system for consistent, predictable load paths. In progress.", image: "" }
+        { label: "v1", state: "failed", text: "REPLACE WITH REAL STORY. Describe the v1 transfer case plate and how it performed.", images: ["SPTCv1-1.png", "SPTCV1-2.jpg"] }
       ],
-      fea: { text: "ANSYS confirmed the shared failure mode and verified the redesigned mounts resolve it, completing the analysis-driven redesign of the full skid plate system.", image: "" },
       stls: [
-        { name: "Transfer Skid v1", file: "models/skid/transfer_v1.stl", desc: "Original transfer case skid plate." },
-        { name: "Transfer Skid v2", file: "models/skid/transfer_v2.stl", desc: "Redesigned transfer case skid plate." }
+        { name: "Transfer Case Skid", file: "TransferCaseSkidPlateFormed.STL", desc: "Transfer case skid plate." }
       ]
     }
 
@@ -559,6 +649,43 @@ const SITE = {
 
 const byId = {};
 SITE.projects.forEach(p => byId[p.id] = p);
+
+/* Resolve all file paths once: base + folder + filename, URL-encoded.
+   - p.folderRaw (already-encoded) overrides p.folder
+   - p.heroAtRoot or empty folder => file sits at base root
+   - filenames already containing %20 are left as-is */
+function enc(s){ return s.indexOf('%') !== -1 ? s : encodeURIComponent(s); }
+function projDir(p){
+  const base = SITE.base ? SITE.base + '/' : '';
+  if (p.folderRaw) return base + p.folderRaw + '/';
+  if (p.folder && p.folder.length) return base + enc(p.folder) + '/';
+  return base;  // root
+}
+function dirOf(folder){ const base = SITE.base ? SITE.base + '/' : ''; if (folder === undefined || folder === null) return base; if (folder.length === 0) return base; return base + enc(folder) + '/'; }
+SITE.projects.forEach(p => {
+  const dir = projDir(p);
+  const stlDir = (p.stlFolder !== undefined) ? dirOf(p.stlFolder) : dir;
+  p.images = (p.images || []).map(f => dir + enc(f));
+  p.stls = (p.stls || []).map(m => Object.assign({}, m, { file: stlDir + enc(m.file) }));
+  if (p.versions) p.versions = p.versions.map(v => Object.assign({}, v, {
+    images: (v.images || (v.image ? [v.image] : [])).map(f => dir + enc(f))
+  }));
+  if (p.fea) {
+    const feaImgs = (p.fea.images || []).map(im => (typeof im === 'string')
+      ? { src: dir + enc(im), cap: '' }
+      : { src: dir + enc(im.file), cap: im.cap || '' });
+    p.fea = Object.assign({}, p.fea, { images: feaImgs });
+  }
+  if (p.reportPdf) p.reportPdf = Object.assign({}, p.reportPdf, { src: dirOf(p.reportPdf.folder) + enc(p.reportPdf.file) });
+});
+// Hub aggregates all sub-part STLs
+SITE.projects.filter(p => p.hubStls && p.subParts).forEach(hub => {
+  const all = [];
+  hub.subParts.forEach(sid => { const sp = byId[sid]; (sp.stls || []).forEach(m => all.push(Object.assign({ _from: sp.title }, m))); });
+  hub.stls = all;
+});
+if (SITE.portrait) SITE.portrait = dirOf(SITE.portrait.folder) + enc(SITE.portrait.file);
+
 
 function pendingBox(label) {
   return '<div class="img-pending"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="8" width="40" height="32" rx="2"/><path d="M4 32l10-10 8 8 6-6 16 14"/><circle cx="34" cy="18" r="4"/></svg><span>' + label + '</span></div>';
@@ -572,34 +699,48 @@ function applyPortrait() {
 }
 
 // ── LANDING CARDS ──
+function buildCard(p) {
+  const img = firstImage(p);
+  const thumb = img ? '<img src="' + img + '" alt="">' : pendingBox(p.id);
+  const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+  return '<div class="project-card" id="card-' + p.id + '">' +
+    '<div class="project-card-head" onclick="toggleCard(\'' + p.id + '\')">' +
+      '<span class="project-num">' + p.num + '</span>' +
+      '<div class="project-thumb">' + thumb + '</div>' +
+      '<h3 class="project-title">' + p.title + ' <span class="chev">\u203A</span></h3>' +
+      '<div class="project-tags">' + tags + '</div>' +
+    '</div>' +
+    '<div class="project-brief"><div class="project-brief-inner">' +
+      '<p class="project-desc">' + p.desc + '</p>' +
+      '<button class="project-viewmore" onclick="openDetail(\'' + p.id + '\')">View even more details</button>' +
+    '</div></div></div>';
+}
+
+let moreShown = 0;
+const MORE_BATCH = 4;
 function renderCards() {
   const grid = document.getElementById('projects-grid');
   const top = SITE.projects.filter(p => p.tier === 'top');
-  grid.innerHTML = top.map(p => {
-    const img = firstImage(p);
-    const thumb = img ? '<img src="' + img + '" alt="">' : pendingBox(p.id);
-    const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
-    return '<div class="project-card" id="card-' + p.id + '">' +
-      '<div class="project-card-head" onclick="toggleCard(\'' + p.id + '\')">' +
-        '<span class="project-num">' + p.num + '</span>' +
-        '<div class="project-thumb">' + thumb + '</div>' +
-        '<h3 class="project-title">' + p.title + ' <span class="chev">›</span></h3>' +
-        '<div class="project-tags">' + tags + '</div>' +
-      '</div>' +
-      '<div class="project-brief"><div class="project-brief-inner">' +
-        '<p class="project-desc">' + p.desc + '</p>' +
-        '<button class="project-viewmore" onclick="openDetail(\'' + p.id + '\')">View even more details</button>' +
-      '</div></div></div>';
-  }).join('');
-
-  // More Projects dropdown
+  grid.innerHTML = top.map(buildCard).join('');
+  // more projects: start hidden, reveal in batches
+  moreShown = 0;
+  document.getElementById('more-grid').innerHTML = '';
   const more = SITE.projects.filter(p => p.tier === 'more');
-  document.getElementById('more-list').innerHTML = more.map(p =>
-    '<div class="more-item" onclick="openDetail(\'' + p.id + '\')">' +
-      '<div><div class="more-item-name">' + p.title + '</div><div class="more-item-desc">' + (p.desc || '') + '</div></div>' +
-      '<span class="more-item-arrow">→</span></div>'
-  ).join('');
-  if (more.length === 0) document.getElementById('more-dropdown').style.display = 'none';
+  if (more.length === 0) { document.getElementById('more-controls').style.display = 'none'; return; }
+  showMoreTiles();
+}
+function showMoreTiles() {
+  const more = SITE.projects.filter(p => p.tier === 'more');
+  const grid = document.getElementById('more-grid');
+  const next = more.slice(moreShown, moreShown + MORE_BATCH);
+  next.forEach(p => { grid.insertAdjacentHTML('beforeend', buildCard(p)); });
+  moreShown += next.length;
+  const btn = document.getElementById('show-more-btn');
+  if (moreShown >= more.length) {
+    document.getElementById('more-controls').style.display = 'none';
+  } else {
+    btn.innerHTML = 'Show more projects <span style="color:var(--amber)">+</span>';
+  }
 }
 
 // accordion: only one open; click elsewhere closes all
@@ -614,7 +755,6 @@ document.addEventListener('click', e => {
     document.querySelectorAll('.project-card').forEach(c => c.classList.remove('open'));
   }
 });
-function toggleMore() { document.getElementById('more-dropdown').classList.toggle('open'); }
 
 // ── DETAIL PAGES ──
 function renderDetailPages() {
@@ -649,31 +789,44 @@ function buildDetailPage(p) {
   if (p.subParts && p.subParts.length) {
     const items = p.subParts.map(sid => {
       const sp = byId[sid];
-      return '<div class="more-item" onclick="openDetail(\'' + sid + '\')" style="border-top:1px solid var(--border)"><div><div class="more-item-name">' + sp.title + '</div><div class="more-item-desc">' + (sp.lead || '').slice(0, 90) + '…</div></div><span class="more-item-arrow">→</span></div>';
+      return '<div class="sub-item" onclick="openDetail(\'' + sid + '\')"><div><div class="sub-item-name">' + sp.title + '</div><div class="sub-item-desc">' + (sp.lead || '').slice(0, 90) + '…</div></div><span class="sub-item-arrow">→</span></div>';
     }).join('');
-    prose += '<h3>Parts In This System</h3><div style="border:1px solid var(--border); background:var(--bg2); margin-top:0.5rem;">' + items + '</div>';
+    prose += '<h3>Parts In This System</h3><div class="sub-list">' + items + '</div>';
   }
 
-  // versions (v1 -> fea -> v2 ordering handled here)
+  // helper: render a row of images (versions / fea) with optional captions
+  function imgRow(arr, fallbackLabel) {
+    if (!arr || !arr.length) return '<div class="fea-image">' + pendingBox(fallbackLabel) + '</div>';
+    return '<div class="fea-grid">' + arr.map(item => {
+      const src = (typeof item === 'string') ? item : item.src;
+      const cap = (typeof item === 'string') ? '' : (item.cap || '');
+      return '<figure class="fea-cell"><img src="' + src + '" alt="" onclick="openLightbox(\'' + src + '\')">' + (cap ? '<figcaption>' + cap + '</figcaption>' : '') + '</figure>';
+    }).join('') + '</div>';
+  }
+  function feaBlock(fea, heading) {
+    if (!fea) return '';
+    return '<h3>' + heading + '</h3><p>' + fea.text + '</p>' + imgRow(fea.images, p.id + '_fea.jpg');
+  }
+  const pdfBtn = p.reportPdf ? '<a class="pdf-btn" href="' + p.reportPdf.src + '" target="_blank" rel="noopener">' + (p.reportPdf.label || 'View Report (PDF)') + '</a>' : '';
+
+  // versions (v1 -> FEA -> v2 ordering)
   let versionsHtml = '';
   if (p.versions && p.versions.length) {
     p.versions.forEach(v => {
-      const vimg = v.image ? '<div class="fea-image"><img src="' + v.image + '" alt=""></div>' : '<div class="fea-image">' + pendingBox(p.id + '_' + v.label + '.jpg') + '</div>';
-      versionsHtml += '<h3><span class="version-badge ' + v.label + '">' + v.label.toUpperCase() + (v.state === 'failed' ? ' — Failed' : v.state === 'redesign' ? ' — Redesign' : '') + '</span></h3><p>' + v.text + '</p>' + vimg;
-      // insert FEA between v1 and v2
-      if (v.label === 'v1' && p.fea) {
-        const fimg = p.fea.image ? '<div class="fea-image"><img src="' + p.fea.image + '" alt=""></div>' : '<div class="fea-image">' + pendingBox(p.id + '_fea.jpg') + '</div>';
-        versionsHtml += '<h3>FEA — Root Cause</h3><p>' + p.fea.text + '</p>' + fimg;
-      }
+      const stateLabel = v.state === 'failed' ? ' — Failed (real-world)' : v.state === 'redesign' ? ' — Redesign' : '';
+      versionsHtml += '<h3><span class="version-badge ' + v.label + '">' + v.label.toUpperCase() + stateLabel + '</span></h3><p>' + v.text + '</p>' + imgRow(v.images, p.id + '_' + v.label + '.jpg');
+      if (v.label === 'v1' && p.fea) versionsHtml += feaBlock(p.fea, 'FEA — Root Cause') + pdfBtn;
     });
   }
 
-  // standalone FEA (projects without versions but with fea)
+  // standalone FEA (no versions)
   let feaHtml = '';
   if (p.fea && (!p.versions || !p.versions.length)) {
-    const fimg = p.fea.image ? '<div class="fea-image"><img src="' + p.fea.image + '" alt=""></div>' : '<div class="fea-image">' + pendingBox(p.id + '_fea.jpg') + '</div>';
-    feaHtml = '<h3>FEA Analysis</h3><p>' + p.fea.text + '</p>' + fimg;
+    feaHtml = feaBlock(p.fea, 'FEA Analysis') + pdfBtn;
   }
+  // PDF button on hub pages that have a report but no versions/fea
+  let hubPdf = '';
+  if (p.reportPdf && !p.versions && !p.fea) hubPdf = pdfBtn;
 
   // callout
   const callout = p.callout ? '<div class="callout"><div class="callout-label">' + p.callout.label + '</div><p>' + p.callout.text + '</p></div>' : '';
@@ -690,9 +843,10 @@ function buildDetailPage(p) {
   const vid = 'v_' + p.id;
   let modelListHtml;
   if (p.stls && p.stls.length) {
-    modelListHtml = p.stls.map((m, i) =>
-      '<div class="model-item" id="' + vid + '-item-' + i + '" onclick="VIEWERS[\'' + vid + '\'].load(' + i + ')"><div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div></div>'
-    ).join('');
+    modelListHtml = p.stls.map((m, i) => {
+      const sub = m._from ? '<div class="model-item-desc" style="color:var(--amber)">' + m._from + '</div>' : '';
+      return '<div class="model-item" id="' + vid + '-item-' + i + '" onclick="VIEWERS[\'' + vid + '\'].load(' + i + ')">' + sub + '<div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div></div>';
+    }).join('');
   } else {
     modelListHtml = '<div class="model-empty">No STL models listed for this project yet. Add them to the stls array in the config.</div>';
   }
@@ -722,7 +876,7 @@ function buildDetailPage(p) {
       '</div><div class="hero-gallery"><div class="hero-main">' + heroMain + '</div>' + heroThumbs + '</div></div></div>' +
     '<div class="detail-body-section"><div class="detail-layout">' +
       '<div class="detail-specs-panel"><h4>Project Specs</h4>' + specs + '</div>' +
-      '<div class="detail-prose">' + prose + versionsHtml + feaHtml + callout + '</div>' +
+      '<div class="detail-prose">' + prose + versionsHtml + feaHtml + callout + (hubPdf || '') + '</div>' +
     '</div></div>' +
     '<div class="detail-body-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">3D Models</h2><div class="section-line"></div></div>' + viewer + '</div>' +
     '<div class="detail-gallery-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Documentation</h2><div class="section-line"></div></div>' +
