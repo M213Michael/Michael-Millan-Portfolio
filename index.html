@@ -319,8 +319,8 @@
         <div class="viewer-toolbar">
           <span class="viewer-toolbar-label">3D Model Viewer</span>
           <span class="viewer-filename" data-fname="home">No model loaded</span>
-          <button class="viewer-btn" data-wire="home" onclick="VIEWERS.home.toggleWireframe()">Wireframe</button>
-          <button class="viewer-btn" onclick="VIEWERS.home.reset()">Reset View</button>
+          <button class="viewer-btn" data-wire="home" onclick="ensureViewer('home').toggleWireframe()">Wireframe</button>
+          <button class="viewer-btn" onclick="ensureViewer('home').reset()">Reset View</button>
         </div>
         <div class="viewer-canvas-wrap" data-canvaswrap="home">
           <div class="viewer-empty" data-empty="home"><svg viewBox="0 0 48 48" fill="none" stroke="#c8871a" stroke-width="1.2"><path d="M24 4l18 10v20L24 44 6 34V14z"/><path d="M24 4v40M6 14l18 10 18-10"/></svg><div class="viewer-empty-text">Select a model from the list</div></div>
@@ -964,7 +964,7 @@ function buildDetailPage(p) {
   if (p.stls && p.stls.length) {
     modelListHtml = p.stls.map((m, i) => {
       const sub = m._from ? '<div class="model-item-desc" style="color:var(--amber)">' + m._from + '</div>' : '';
-      return '<div class="model-item" id="' + vid + '-item-' + i + '" onclick="VIEWERS[\'' + vid + '\'].load(' + i + ')">' + sub + '<div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div></div>';
+      return '<div class="model-item" id="' + vid + '-item-' + i + '" onclick="ensureViewer(\'' + vid + '\').load(' + i + ')">' + sub + '<div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div></div>';
     }).join('');
   } else {
     modelListHtml = '<div class="model-empty">No STL models listed for this project yet. Add them to the stls array in the config.</div>';
@@ -974,8 +974,8 @@ function buildDetailPage(p) {
       '<div class="model-list"><div class="model-list-head">Models — ' + p.title + '</div><div class="model-list-scroll">' + modelListHtml + '</div></div>' +
       '<div class="viewer-main">' +
         '<div class="viewer-toolbar"><span class="viewer-toolbar-label">3D Model Viewer</span><span class="viewer-filename" data-fname="' + vid + '">No model loaded</span>' +
-          '<button class="viewer-btn" onclick="VIEWERS[\'' + vid + '\'].toggleWireframe()">Wireframe</button>' +
-          '<button class="viewer-btn" onclick="VIEWERS[\'' + vid + '\'].reset()">Reset View</button></div>' +
+          '<button class="viewer-btn" onclick="ensureViewer(\'' + vid + '\').toggleWireframe()">Wireframe</button>' +
+          '<button class="viewer-btn" onclick="ensureViewer(\'' + vid + '\').reset()">Reset View</button></div>' +
         '<div class="viewer-canvas-wrap" data-canvaswrap="' + vid + '">' +
           '<div class="viewer-empty" data-empty="' + vid + '"><svg viewBox="0 0 48 48" fill="none" stroke="#c8871a" stroke-width="1.2"><path d="M24 4l18 10v20L24 44 6 34V14z"/><path d="M24 4v40M6 14l18 10 18-10"/></svg><div class="viewer-empty-text">Select a model</div></div>' +
           '<canvas data-canvas="' + vid + '"></canvas></div>' +
@@ -1032,16 +1032,16 @@ function openDetail(id) {
   if (id === '__projects') { navTo('projects'); return; }
   showPage(id);
   const vid = 'v_' + id;
-  if (VIEWERS[vid]) setTimeout(() => VIEWERS[vid].resize(), 60);
+  setTimeout(() => { const v = ensureViewer(vid); if (v) v.resize(); }, 60);
 }
 function navTo(target) {
   const homeSections = ['about', 'projects', 'fea', 'viewer', 'contact'];
   if (homeSections.includes(target)) {
     showPage('home');
-    setTimeout(() => { const el = document.getElementById(target); if (el) el.scrollIntoView({ behavior: 'smooth' }); if (VIEWERS.home) VIEWERS.home.resize(); }, 50);
+    setTimeout(() => { const el = document.getElementById(target); if (el) el.scrollIntoView({ behavior: 'smooth' }); { const v = ensureViewer('home'); if (v) v.resize(); } }, 50);
   } else { openDetail(target); }
 }
-function goHome() { showPage('home'); window.scrollTo(0, 0); setTimeout(() => { if (VIEWERS.home) VIEWERS.home.resize(); }, 50); }
+function goHome() { showPage('home'); window.scrollTo(0, 0); setTimeout(() => { { const v = ensureViewer('home'); if (v) v.resize(); } }, 50); }
 
 // ── LIGHTBOX ──
 function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('open'); }
@@ -1164,29 +1164,45 @@ renderFeaReports();
 renderDetailPages();
 
 // build a viewer per project + the home viewer (home = all stls combined)
+// Lazy viewer initialization — mobile browsers cap simultaneous WebGL contexts
+// (often ~8), so we only build a viewer the first time its page is shown.
+const VIEWER_STLS = {};   // vid -> stls array (for deferred creation)
+
 window.addEventListener('load', () => {
-  // home viewer: aggregate all stls, with project tag in desc
+  // Home viewer model list: aggregate all stls, but skip the hub's duplicated
+  // copies (sub-parts already contribute their own). Dedupe by resolved file.
   const homeStls = [];
-  SITE.projects.forEach(p => (p.stls || []).forEach(s => homeStls.push(Object.assign({ _proj: p.id }, s))));
-  // render home list
+  const seen = {};
+  SITE.projects.forEach(p => {
+    if (p.hubStls) return; // skip hub aggregate to avoid duplicates
+    (p.stls || []).forEach(s => {
+      if (seen[s.file]) return;
+      seen[s.file] = true;
+      homeStls.push(Object.assign({ _proj: p.id }, s));
+    });
+  });
   const homeList = document.getElementById('home-model-list');
   if (homeStls.length) {
     homeList.innerHTML = homeStls.map((m, i) => {
       const proj = byId[m._proj];
       const link = '<a class="model-item-link" onclick="event.stopPropagation(); openDetail(\'' + m._proj + '\')">↳ ' + proj.title + '</a>';
-      return '<div class="model-item" id="v_home-item-' + i + '" onclick="VIEWERS.home.load(' + i + ')"><div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div>' + link + '</div>';
+      return '<div class="model-item" id="v_home-item-' + i + '" onclick="ensureViewer(\'home\').load(' + i + ')"><div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div>' + link + '</div>';
     }).join('');
   } else {
     homeList.innerHTML = '<div class="model-empty">No models configured yet.</div>';
   }
-  // fix home viewer canvas selectors (uses data-canvas="home")
-  VIEWERS.home = makeViewer("home", homeStls);
-
-  SITE.projects.forEach(p => {
-    const vid = 'v_' + p.id;
-    VIEWERS[vid] = makeViewer(vid, p.stls || []);
-  });
+  // Register stls for deferred creation (don't build the GL context yet)
+  VIEWER_STLS.home = homeStls;
+  SITE.projects.forEach(p => { VIEWER_STLS['v_' + p.id] = p.stls || []; });
 });
+
+// Create a viewer on demand, the first time it's needed. Returns the api.
+function ensureViewer(vid) {
+  if (VIEWERS[vid]) return VIEWERS[vid];
+  const api = makeViewer(vid, VIEWER_STLS[vid] || []);
+  VIEWERS[vid] = api;
+  return api;
+}
 
 </script>
 </body>
