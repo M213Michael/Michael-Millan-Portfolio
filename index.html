@@ -256,7 +256,7 @@
     <div class="hero-content">
       <div class="hero-label">Mechanical Engineer — Arcata, CA</div>
       <h1 class="hero-name">Michael<br><span>Millan</span></h1>
-      <p class="hero-tagline">SolidWorks design, FEA simulation, and structural fabrication. Building things that work the first time — and proving it with data when they don't.</p>
+      <p class="hero-tagline">SolidWorks design, FEA simulation, and structural fabrication. I design, build, and validate hardware against real-world loads.</p>
       <div class="hero-meta">
         <div class="hero-stat"><span class="hero-stat-val">BS ME</span><span class="hero-stat-label">UC Merced 2024</span></div>
         <div class="hero-stat"><span class="hero-stat-val">SolidWorks</span><span class="hero-stat-label">Primary CAD</span></div>
@@ -507,6 +507,9 @@ const SITE = {
         thumb: "PackoutPullOutTD.png",
         summary: "Vertical, pull-out, and combined load analysis that confirmed a fatigue failure from cold welds, and verified the stiffener fix.",
         reportStatus: "coming-soon",
+        videos: [
+          { file: "PackoutCombinedTD.mp4", cap: "Combined load — total deformation" }
+        ],
         gifs: [],
         text: "I ran ANSYS Static Structural analysis under vertical load, pull-out load, and combined loading to map the deformation and stress in the mount. The analysis confirmed that the original failure was a fatigue failure: my welds had run too cold, creating a weak fusion zone that became the crack initiation site under repeated loading. The stiffener lowers the cyclic stress at that location so the repaired mount holds up.",
         images: [
@@ -635,6 +638,10 @@ const SITE = {
         thumb: "SPETDMid.png",
         summary: "Rock-strike load cases from 3,000 to 15,000 lbf. Deformation and critical zones matched the real-world failure exactly. Full report available.",
         reportStatus: "available",
+        videos: [
+          { file: "SPE10kMTD.mp4", cap: "10k lbf mid span — total deformation" },
+          { file: "SPE10kCTD.mp4", cap: "10k lbf corner — total deformation" }
+        ],
         gifs: [],
         text: "Under real-world use, deformation matched the FEA prediction and the critical zones were confirmed by the physical failure. The simulation identified the unsupported center span and the corner bolt locations as the governing failure points, which became the design brief for v2. The full analysis, including all load cases and safety factors, is in the report below.",
         images: [
