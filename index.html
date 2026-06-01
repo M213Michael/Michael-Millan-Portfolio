@@ -150,6 +150,23 @@
   .pdf-btn { display: inline-flex; align-items: center; gap: 8px; margin: 1rem 0 0.5rem; padding: 11px 20px; border: 1px solid var(--amber); background: var(--amber-dim); color: var(--amber); font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
   .pdf-btn:hover { background: rgba(200,135,26,0.25); }
   .pdf-btn::before { content: '\2193'; }
+  .fea-reports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5px; background: var(--border); }
+  .fea-report-card { background: var(--bg); display: flex; flex-direction: column; }
+  .fea-report-thumb { width: 100%; aspect-ratio: 16/10; background: var(--bg2); overflow: hidden; position: relative; border-bottom: 1px solid var(--border); }
+  .fea-report-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fea-report-status { position: absolute; top: 10px; right: 10px; font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border: 1px solid; }
+  .fea-report-status.available { color: #6dcaa5; border-color: rgba(29,158,117,0.4); background: rgba(29,158,117,0.12); }
+  .fea-report-status.coming-soon { color: var(--amber); border-color: rgba(200,135,26,0.4); background: var(--amber-dim); }
+  .fea-report-status.in-progress { color: var(--text3); border-color: var(--border2); background: var(--bg3); }
+  .fea-report-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; flex: 1; }
+  .fea-report-title { font-family: var(--condensed); font-size: 1.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+  .fea-report-summary { font-size: 12px; font-weight: 300; color: var(--text2); line-height: 1.6; flex: 1; }
+  .fea-report-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border: 1px solid var(--border2); background: transparent; color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, border-color 0.2s; width: fit-content; }
+  .fea-report-btn:hover { background: var(--amber-dim); border-color: var(--amber); }
+  .fea-report-btn::after { content: '\2192'; }
+  .fea-gif { margin: 1.5rem 0; max-width: 680px; }
+  .fea-gif img { width: 100%; border: 1px solid var(--border2); background: var(--bg2); display: block; }
+  .fea-gif figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; color: var(--text3); text-transform: uppercase; padding: 6px 2px; }
 
   .detail-gallery-section { padding: 4rem 3rem; border-bottom: 1px solid var(--border); }
   .detail-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
@@ -223,6 +240,7 @@
   <ul class="nav-links">
     <li><a onclick="navTo('about')">About</a></li>
     <li><a onclick="navTo('projects')">Projects</a></li>
+    <li><a onclick="navTo('fea')">FEA Reports</a></li>
     <li><a onclick="navTo('viewer')">3D Viewer</a></li>
     <li><a onclick="navTo('contact')">Contact</a></li>
   </ul>
@@ -274,8 +292,14 @@
 
   </section>
 
+  <section id="fea">
+    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">FEA Reports</h2><div class="section-line"></div></div>
+    <p style="font-size:13px; font-weight:300; color:var(--text2); margin-bottom:2.5rem; font-family:var(--mono); letter-spacing:0.04em; max-width:640px;">Finite element analysis studies validating my designs against real-world loads and failures. Read the full report or jump to the project.</p>
+    <div class="fea-reports-grid" id="fea-reports-grid"></div>
+  </section>
+
   <section id="viewer">
-    <div class="section-header"><span class="section-num">03</span><h2 class="section-title">3D Viewer</h2><div class="section-line"></div></div>
+    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">3D Viewer</h2><div class="section-line"></div></div>
     <p style="font-size:13px; font-weight:300; color:var(--text2); margin-bottom:2rem; font-family:var(--mono); letter-spacing:0.04em;">Pick a model from the list to load it. Drag to rotate, scroll to zoom, right-drag to pan.</p>
     <div class="viewer-shell" data-viewer="home">
       <div class="model-list">
@@ -299,7 +323,7 @@
   </section>
 
   <section id="contact">
-    <div class="section-header"><span class="section-num">04</span><h2 class="section-title">Contact</h2><div class="section-line"></div></div>
+    <div class="section-header"><span class="section-num">05</span><h2 class="section-title">Contact</h2><div class="section-line"></div></div>
     <div class="contact-grid">
       <div><h3 class="contact-headline">Let's Work<br>Together</h3><p class="contact-sub">Open to full-time roles in California, Nevada, or Arizona. Available to relocate on 30 days notice. No staffing agencies.</p></div>
       <div class="contact-links">
@@ -476,6 +500,10 @@ const SITE = {
         { label: "v2", state: "redesign", text: "I rewelded the joint and added a small stiffener to reduce the cyclic stress at the failure location. The repair addressed both the workmanship issue and the stress concentration that let the crack start.", image: "fab1.jpg" }
       ],
       fea: {
+        thumb: "PackoutPullOutTD.png",
+        summary: "Vertical, pull-out, and combined load analysis that confirmed a fatigue failure from cold welds, and verified the stiffener fix.",
+        reportStatus: "coming-soon",
+        gifs: [],
         text: "I ran ANSYS Static Structural analysis under vertical load, pull-out load, and combined loading to map the deformation and stress in the mount. The analysis confirmed that the original failure was a fatigue failure: my welds had run too cold, creating a weak fusion zone that became the crack initiation site under repeated loading. The stiffener lowers the cyclic stress at that location so the repaired mount holds up.",
         images: [
           { file: "PackoutTD.png", cap: "Total deformation" },
@@ -507,7 +535,7 @@ const SITE = {
         { h: "Function", p: ["Rock sliders protect the rockers on the trail and serve as a structural jacking and recovery point, which means they have to carry the full weight of the truck at a single contact."] },
         { h: "Built and Proven", p: ["These are fabricated, installed, and tested in the real world. The truck has teetered on the sliders with its full weight on them and nothing moved. There is a photo here of the truck on a hi-lift jack lifting a wheel clear off the ground, supported entirely by a slider, so the design is proven under the load it was built for."] }
       ],
-      fea: { text: "A formal FEA applying full vehicle weight as a point load is planned to put numbers to what the hi-lift test already demonstrated in the field. Results will be added here.", images: [] },
+      fea: { thumb: "RSISO.png", summary: "Full-vehicle-weight point-load study to quantify what the hi-lift jack test already proved in the field.", reportStatus: "in-progress", gifs: [], text: "A formal FEA applying full vehicle weight as a point load is planned to put numbers to what the hi-lift test already demonstrated in the field. Results will be added here.", images: [] },
       stls: [
         { name: "Rock Slider", file: "Slider.STL", desc: "Rock slider weldment." }
       ]
@@ -530,7 +558,7 @@ const SITE = {
         { h: "Function", p: ["The winch mount transfers winch line pull into the frame. It has been fabricated, installed, and used multiple times, and so far everything has worked well under real recovery loads."] },
         { h: "License Plate Integration", p: ["A relocated license plate holder is built into the mount so the plate stays visible once the winch is installed. It has worked well in use. The one thing I would change is the finish: it was painted with spray paint, which is starting to rust through, so a more durable coating is the next improvement."] }
       ],
-      fea: { text: "Since the mount is already built and proven through repeated use, a formal FEA is a lower priority, but a line-pull load study can be added here to quantify the margins.", images: [] },
+      fea: { thumb: "Winch1.png", summary: "Line-pull load study to quantify stress margins on the already-proven winch mount.", reportStatus: "in-progress", gifs: [], text: "Since the mount is already built and proven through repeated use, a formal FEA is a lower priority, but a line-pull load study can be added here to quantify the margins.", images: [] },
       stls: [
         { name: "Winch Mount", file: "WinchMount.STL", desc: "Front winch mount weldment." },
         { name: "License Plate Holder", file: "LicencePlateHolder.STL", desc: "Integrated plate holder." }
@@ -586,6 +614,10 @@ const SITE = {
         { label: "v2", state: "redesign", text: "The FEA confirmed what the failure showed: the center span has no internal structure and is where deformation concentrates, and the corner fasteners see the highest shear. The redesign adds bracing across the center span to distribute load and limit deformation, and upsizes the corner fasteners to M12 Class 10.9 for additional shear margin at the most critical bolt location.", images: ["SPEV2.png", "SPEV2-1.png"] }
       ],
       fea: {
+        thumb: "SPETDMid.png",
+        summary: "Rock-strike load cases from 3,000 to 15,000 lbf. Deformation and critical zones matched the real-world failure exactly. Full report available.",
+        reportStatus: "available",
+        gifs: [],
         text: "Under real-world use, deformation matched the FEA prediction and the critical zones were confirmed by the physical failure. The simulation identified the unsupported center span and the corner bolt locations as the governing failure points, which became the design brief for v2. The full analysis, including all load cases and safety factors, is in the report below.",
         images: [
           { file: "SPETDMid.png", cap: "Total deformation, center span" },
@@ -617,7 +649,7 @@ const SITE = {
         { label: "v1", state: "failed", text: "The transmission plate failed, but far less dramatically than the front plate. It deflected near the mounting holes next to the formed section. With no gussets, the large span of unsupported material let the forms weaken under load. It is still usable, but the deflection made clear the span needed support. A secondary nuisance also showed up: sand accumulated near the main braces with no way to escape, leaving a perpetual mound of sand under the truck.", images: ["SPTV1-1.jpg", "SPTv1-2.png", "SPTv1-3.png", "SPTV1-4.jpg"] },
         { label: "v2", state: "redesign", text: "Version 2 adds gussets to support the unsupported span and stop the deflection at the mounting holes. It also adds ventilation holes that serve two purposes: reducing weight and, importantly, letting accumulated sand shed out instead of building up under the truck.", images: ["SPTv2-1.png", "SPTV2-2.png"] }
       ],
-      fea: { text: "A dedicated FEA study of the transmission plate is in progress and will be added here, focused on confirming that the added gussets resolve the center-span deflection seen in service.", images: [] },
+      fea: { thumb: "SPTv2-1.png", summary: "Analysis of the v1 center-span deflection near the mounting holes, driving the gusseted v2 redesign. Report coming soon.", reportStatus: "coming-soon", gifs: [], text: "The transmission plate FEA is complete and a full report is coming soon. It focuses on the center-span deflection near the mounting holes seen in service and confirms that the added gussets resolve it.", images: [] },
       stls: [
         { name: "Trans Skid v1", file: "SkidPlateTransmisionFormed.STL", desc: "Original transmission skid plate." },
         { name: "Trans Skid v2", file: "SkidPlateTransmisionFormedV2.STL", desc: "Redesigned transmission skid plate." }
@@ -681,7 +713,11 @@ SITE.projects.forEach(p => {
     const feaImgs = (p.fea.images || []).map(im => (typeof im === 'string')
       ? { src: dir + enc(im), cap: '' }
       : { src: dir + enc(im.file), cap: im.cap || '' });
-    p.fea = Object.assign({}, p.fea, { images: feaImgs });
+    const feaGifs = (p.fea.gifs || []).map(g => (typeof g === 'string')
+      ? { src: dir + enc(g), cap: '' }
+      : { src: dir + enc(g.file), cap: g.cap || '' });
+    const feaThumb = p.fea.thumb ? dir + enc(p.fea.thumb) : null;
+    p.fea = Object.assign({}, p.fea, { images: feaImgs, gifs: feaGifs, thumbSrc: feaThumb });
   }
   if (p.reportPdf) p.reportPdf = Object.assign({}, p.reportPdf, { src: dirOf(p.reportPdf.folder) + enc(p.reportPdf.file) });
 });
@@ -728,6 +764,39 @@ function renderCards() {
   const top = SITE.projects.filter(p => p.tier === 'top')
     .sort((a, b) => (a.order || 99) - (b.order || 99));
   grid.innerHTML = top.map(buildCard).join('');
+}
+
+function renderFeaReports() {
+  const grid = document.getElementById('fea-reports-grid');
+  if (!grid) return;
+  // any project with an fea block, in landing order; sub-parts after their hub
+  const withFea = SITE.projects.filter(p => p.fea)
+    .sort((a, b) => (a.order || 50) - (b.order || 50));
+  const statusLabel = { 'available': 'Report Ready', 'coming-soon': 'Report Soon', 'in-progress': 'In Progress' };
+  grid.innerHTML = withFea.map(p => {
+    const thumb = p.fea.thumbSrc ? '<img src="' + p.fea.thumbSrc + '" alt="">' : pendingBox(p.id);
+    const st = p.fea.reportStatus || 'in-progress';
+    const badge = '<span class="fea-report-status ' + st + '">' + (statusLabel[st] || st) + '</span>';
+    const summary = p.fea.summary || (p.fea.text || '').slice(0, 140);
+    return '<div class="fea-report-card">' +
+      '<div class="fea-report-thumb">' + thumb + badge + '</div>' +
+      '<div class="fea-report-body">' +
+        '<div class="fea-report-title">' + p.title + '</div>' +
+        '<div class="fea-report-summary">' + summary + '</div>' +
+        '<button class="fea-report-btn" onclick="openDetailToFea(\'' + p.id + '\')">Read more</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+// open a project page and scroll to its FEA heading
+function openDetailToFea(id) {
+  openDetail(id);
+  setTimeout(() => {
+    const page = document.getElementById('page-' + id);
+    if (!page) return;
+    const heads = page.querySelectorAll('.detail-prose h3');
+    for (const h of heads) { if (/FEA/i.test(h.textContent)) { h.scrollIntoView({ behavior: 'smooth', block: 'start' }); break; } }
+  }, 120);
 }
 
 // accordion: only one open; click elsewhere closes all
@@ -790,9 +859,14 @@ function buildDetailPage(p) {
       return '<figure class="fea-cell"><img src="' + src + '" alt="" onclick="openLightbox(\'' + src + '\')">' + (cap ? '<figcaption>' + cap + '</figcaption>' : '') + '</figure>';
     }).join('') + '</div>';
   }
+  function gifRow(gifs) {
+    if (!gifs || !gifs.length) return '';
+    return gifs.map(g => '<figure class="fea-gif"><img src="' + g.src + '" alt="" loading="lazy">' + (g.cap ? '<figcaption>' + g.cap + '</figcaption>' : '') + '</figure>').join('');
+  }
   function feaBlock(fea, heading) {
     if (!fea) return '';
-    return '<h3>' + heading + '</h3><p>' + fea.text + '</p>' + imgRow(fea.images, p.id + '_fea.jpg');
+    const imgs = (fea.images && fea.images.length) ? imgRow(fea.images, p.id + '_fea.jpg') : '';
+    return '<h3>' + heading + '</h3><p>' + fea.text + '</p>' + gifRow(fea.gifs) + imgs;
   }
   const pdfBtn = p.reportPdf ? '<a class="pdf-btn" href="' + p.reportPdf.src + '" target="_blank" rel="noopener">' + (p.reportPdf.label || 'View Report (PDF)') + '</a>' : '';
 
@@ -903,7 +977,7 @@ function openDetail(id) {
   if (VIEWERS[vid]) setTimeout(() => VIEWERS[vid].resize(), 60);
 }
 function navTo(target) {
-  const homeSections = ['about', 'projects', 'viewer', 'contact'];
+  const homeSections = ['about', 'projects', 'fea', 'viewer', 'contact'];
   if (homeSections.includes(target)) {
     showPage('home');
     setTimeout(() => { const el = document.getElementById(target); if (el) el.scrollIntoView({ behavior: 'smooth' }); if (VIEWERS.home) VIEWERS.home.resize(); }, 50);
@@ -1028,6 +1102,7 @@ function makeViewer(vid, stls) {
 // ── BOOT ──
 applyPortrait();
 renderCards();
+renderFeaReports();
 renderDetailPages();
 
 // build a viewer per project + the home viewer (home = all stls combined)
