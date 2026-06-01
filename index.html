@@ -271,10 +271,7 @@
   <section id="projects">
     <div class="section-header"><span class="section-num">02</span><h2 class="section-title">Projects</h2><div class="section-line"></div></div>
     <div class="projects-grid" id="projects-grid"></div>
-    <div class="projects-grid" id="more-grid" style="margin-top:1.5px;"></div>
-    <div id="more-controls" style="text-align:center; padding-top:1.5rem;">
-      <button class="show-more-btn" id="show-more-btn" onclick="showMoreTiles()">Show more projects <span style="color:var(--amber)">+</span></button>
-    </div>
+
   </section>
 
   <section id="viewer">
@@ -359,31 +356,31 @@ const SITE = {
   projects: [
 
     {
-      id: "suspension", num: "P-001", title: "Long-Travel Suspension", tier: "top",
+      id: "suspension", num: "P-001", title: "Long-Travel Suspension", tier: "top", order: 1,
       tags: ["SolidWorks", "ANSYS FEA", "Kinematics"],
-      desc: "Parametric suspension kinematic model with Design Study optimization, plus ANSYS validation that predicted a weld failure at the exact real-world location.",
+      desc: "An in-progress long-travel front suspension targeting ~14 inches of wheel travel. Full kinematic sweep complete; currently designing the control arms.",
       folder: "Suspension",
       images: ["Scan.jpg", "Scan1.jpg"],
       specs: [
-        ["Vehicle", "2021 Ford F-150, 5.0 Coyote V8"],
-        ["Software", "SolidWorks, ANSYS Mechanical"],
-        ["Analysis", "Static Structural FEA, Kinematic Design Study"],
-        ["Validation", "Weld failure predicted at exact physical location"]
+        ["Vehicle", "2021 Ford F-150"],
+        ["Travel Goal", "~14 in front (15 in safe max with stock spindle)"],
+        ["Shock Target", "Fox 3.0 x 14 in internal bypass"],
+        ["Software", "SolidWorks (kinematic Design Study)"],
+        ["Status", "Design and kinematic study, not yet built"]
       ],
-      lead: "A parametric front suspension taken from kinematic model through FEA validation, using my 2021 F-150 as the test platform. The headline result: a simulation that predicted a weld failure at the exact location it later occurred in the real world.",
+      lead: "An ongoing pro-level long-travel front suspension design for my 2021 F-150, targeting around 14 inches of front wheel travel. Everything is currently in the design and kinematic-study phase, drawing inspiration from established long-travel builders.",
       prose: [
-        { h: "Objective", p: ["The goal was a long-travel front suspension that maximized wheel travel for off-road use while keeping camber, caster, and bumpsteer within usable limits across the full range of motion. Rather than guessing at geometry, I built a parametric model that let me test changes quantitatively."] },
-        { h: "Kinematic Modeling", p: ["I built the suspension hardpoints as a fully parametric SolidWorks model, then ran Design Studies to sweep pickup point locations and measure the effect on key suspension metrics through the travel envelope. This turned suspension tuning into a data exercise."] },
-        { h: "FEA Validation", p: ["I ran ANSYS Static Structural analysis on the fabricated components under worst-case off-road loading. The simulation flagged a weld seam as the primary stress concentration and predicted failure there."] }
+        { h: "Objective", p: ["The goal is a long-travel front end with around 14 inches of wheel travel, drawing inspiration from established long-travel builders. Ideally I would target closer to 18 inches, but the stock spindle and the vertical orientation of the ball joint cap safe travel at about 15 inches, so 14 is the realistic design point."] },
+        { h: "Kinematic Study", p: ["I have completed a full kinematic sweep, cycling the suspension through its travel across different lower control arm heights and steering positions to confirm everything clears. The geometry checks out through the range of motion. I am now designing the upper and lower control arms themselves."] },
+        { h: "Open Problems", p: ["Two things I am still working through: CV axle angle through the travel range, and packaging the upper shock tab. I would like to run a Fox 3.0 by 14 inch internal bypass, but there is interference with the unibody where the fender attaches to the frame. Once the uppers and lowers are finalized they will be developed into a fabricatable sheet metal design. At this stage everything is theoretical and nothing has been built yet."] }
       ],
-      callout: { label: "Validated Result", text: "When the part was field-tested, it failed at the exact weld seam the simulation predicted. This is documented, real-world validation of the analysis, not just a render." },
       stls: []
     },
 
     {
-      id: "molle", num: "P-002", title: "MOLLE Panel System", tier: "top",
+      id: "molle", num: "P-004", title: "MOLLE Panel System", tier: "top", order: 4,
       tags: ["Sheet Metal", "SolidWorks", "Scan-to-CAD"],
-      desc: "Modular MOLLE bed panel system with a full library of printed mounts, modeled from scan data as sheet metal for clean laser-and-brake fabrication.",
+      desc: "Modular MOLLE bed system in 10-gauge steel with a library of custom mounts. Installed and in regular use on the trail.",
       folder: "MollePanel",
       images: ["MP1.png", "MP2.png", "MP3.png", "MP4.png", "MP5.png", "MP6.png", "MP7.png", "MP8.png", "MPScan.jpg", "Install.jpg"],
       specs: [
@@ -392,11 +389,11 @@ const SITE = {
         ["Basis", "3D scan of bed area"],
         ["Output", "Flat patterns + printed mounts"]
       ],
-      lead: "A modular MOLLE bed panel system that turns the truck bed into reconfigurable, organized storage, backed by a growing library of custom mounts for specific gear. Modeled from scan data and built as sheet metal so the panels go straight from CAD to laser and brake.",
+      lead: "A modular MOLLE bed panel system that turns the truck bed into reconfigurable, organized storage, backed by a growing library of custom mounts. The panels are built from 10-gauge mild steel and the system is installed and in regular use.",
       prose: [
-        { h: "Concept", p: ["The bed needed organized, reconfigurable mounting for gear without permanent fixturing. MOLLE spacing gives a standard grid that accepts a wide range of off-the-shelf pouches and the custom mounts I designed around it."] },
-        { h: "Scan to Sheet Metal", p: ["I scanned the bed area to capture the real mounting surfaces, then modeled the panels in SolidWorks Sheet Metal so each one unfolds to a clean flat pattern with correct bend reliefs and hole spacing for standard fabrication."] },
-        { h: "Mount Library", p: ["On top of the panels I designed a family of purpose-built mounts, each solving a specific stowage problem: hi-lift jack, recovery hitch, fuel and water jugs, a Jackery power station, flag, QuickFist clamps, and more. Browse them in the model viewer below."] }
+        { h: "Concept", p: ["The bed needed organized, reconfigurable mounting for gear without permanent fixturing. MOLLE spacing gives a standard grid that accepts a wide range of off-the-shelf pouches and the custom mounts I designed around it. The panel system is installed and has been used on several trips."] },
+        { h: "Construction", p: ["The panels are made from 10-gauge mild steel. The build mixes processes depending on the part: some features are formed, some are welded, and some mounts are 3D printed, choosing the right method for each piece."] },
+        { h: "Mount Library and Status", p: ["I designed a family of purpose-built mounts, each solving a specific stowage problem, and they are at different stages. In regular use: the hi-lift jack mount, the water jug mount, and the Milwaukee Packout mount. The flag mount is fabricated and its clip is 3D printed. The recovery hitch mount is plasma cut but not yet formed or welded. The Jackery power station mount is still in the SolidWorks phase. Aside from the Packout mount, none have had FEA yet. Browse them all in the model viewer below."] }
       ],
       stls: [
         { name: "Clip", file: "Clip.STL", desc: "MOLLE attachment clip." },
@@ -412,7 +409,7 @@ const SITE = {
     },
 
     {
-      id: "electrical", num: "P-003", title: "Electrical & Accessories", tier: "top",
+      id: "electrical", num: "P-007", title: "Electrical & Accessories", tier: "top", order: 7,
       tags: ["12V Systems", "SolidWorks", "Integration"],
       desc: "Designed mounts and integration hardware for the truck's electrical system, starting with the AUX Beam control box mount. More component mounts coming soon.",
       folder: "Electrical",
@@ -435,7 +432,7 @@ const SITE = {
     },
 
     {
-      id: "skidplates", num: "P-004", title: "Skid Plate System", tier: "top", isHub: true,
+      id: "skidplates", num: "P-002", title: "Skid Plate System", tier: "top", isHub: true, order: 2,
       tags: ["Scan-to-CAD", "ANSYS FEA", "Iterative Design"],
       desc: "A family of underbody skid plates protecting the engine, transmission, and transfer case. Each part went through a v1 that failed, FEA to find out why, and a v2 redesign.",
       folder: "",
@@ -458,9 +455,9 @@ const SITE = {
     },
 
     {
-      id: "packout", num: "P-005", title: "Milwaukee Packout Mount", tier: "top",
+      id: "packout", num: "P-003", title: "Milwaukee Packout Mount", tier: "top", order: 3, thumb: "PackoutPullOutTD.png",
       tags: ["SolidWorks", "ANSYS FEA", "Fatigue", "v1 to v2"],
-      desc: "A bed mount for the Milwaukee Packout system that failed in service from cold welds. I rewelded it, added a stiffener, and used FEA to confirm the fatigue root cause.",
+      desc: "A Milwaukee Packout bed mount that fatigue-cracked from cold welds. I rewelded it, added a stiffener, and ran FEA to confirm the root cause.",
       folder: "Packout",
       images: ["fab.jpg", "fab1.jpg", "MP3.png"],
       stlFolder: "MollePanel",
@@ -495,9 +492,9 @@ const SITE = {
     },
 
     {
-      id: "rockslider", num: "P-006", title: "Rock Sliders", tier: "more",
+      id: "rockslider", num: "P-005", title: "Rock Sliders", tier: "top", order: 5,
       tags: ["Weldments", "ANSYS FEA", "Fabrication"],
-      desc: "Bolt-on rock sliders for rocker panel protection, FEA-verified to support full vehicle weight as a jacking point.",
+      desc: "Bolt-on rock sliders, built and installed. Proven by jacking the truck off a single slider until the wheel lifted off the ground.",
       folder: "RockSliders",
       images: ["Jack.jpg", "RSISO.png", "RSBottomISO.png", "Fab.jpg", "selfie1.jpg"],
       specs: [
@@ -505,21 +502,21 @@ const SITE = {
         ["Software", "SolidWorks, ANSYS Mechanical"],
         ["Verification", "Full-vehicle-weight jacking load"]
       ],
-      lead: "Bolt-on rock sliders protecting the rocker panels and doubling as a rated jacking point, verified in FEA to hold the truck's full weight.",
+      lead: "Bolt-on rock sliders protecting the rocker panels and doubling as a jacking and recovery point. These are built, installed, and proven: the truck has had its full weight on a single slider with no issue.",
       prose: [
         { h: "Function", p: ["Rock sliders protect the rockers on the trail and serve as a structural jacking and recovery point, which means they have to carry the full weight of the truck at a single contact."] },
-        { h: "Fabrication", p: ["The sliders were fabricated as a weldment and bolt to the frame, sized so they double as a confident jacking point off a single slider."] }
+        { h: "Built and Proven", p: ["These are fabricated, installed, and tested in the real world. The truck has teetered on the sliders with its full weight on them and nothing moved. There is a photo here of the truck on a hi-lift jack lifting a wheel clear off the ground, supported entirely by a slider, so the design is proven under the load it was built for."] }
       ],
-      fea: { text: "ANSYS analysis applied the full vehicle weight as a point load to simulate jacking off a single slider, confirming the weldment and frame mounts hold without yielding.", images: [] },
+      fea: { text: "A formal FEA applying full vehicle weight as a point load is planned to put numbers to what the hi-lift test already demonstrated in the field. Results will be added here.", images: [] },
       stls: [
         { name: "Rock Slider", file: "Slider.STL", desc: "Rock slider weldment." }
       ]
     },
 
     {
-      id: "winch", num: "P-007", title: "Winch Mount", tier: "more",
+      id: "winch", num: "P-006", title: "Winch Mount", tier: "top", order: 6,
       tags: ["Weldments", "SolidWorks", "ANSYS FEA"],
-      desc: "Front winch mount weldment with an integrated license plate holder, FEA-checked to carry rated line pull into the frame.",
+      desc: "Front winch mount with integrated license plate holder. Built, installed, and used multiple times in real recoveries.",
       folder: "Winch",
       images: ["Winch1.png", "Winch2.jpg", "LP1.png"],
       specs: [
@@ -528,12 +525,12 @@ const SITE = {
         ["Extra", "Integrated license plate holder"],
         ["Verification", "Rated line-pull loading"]
       ],
-      lead: "A front winch mount weldment designed to carry rated winch line pull into the frame, with an integrated license plate holder so the plate relocates cleanly with the winch.",
+      lead: "A front winch mount with an integrated license plate holder. Built, painted, installed, and used multiple times with no issues. A formal FEA is planned but the part has already proven itself in service.",
       prose: [
-        { h: "Function", p: ["The winch mount transfers full rated line pull into the frame. Geometry and weld layout were designed to spread that load into the frame rails rather than concentrating it at the fasteners."] },
-        { h: "License Plate Integration", p: ["A relocated license plate holder is built into the mount so the plate stays visible and protected once the winch is installed."] }
+        { h: "Function", p: ["The winch mount transfers winch line pull into the frame. It has been fabricated, installed, and used multiple times, and so far everything has worked well under real recovery loads."] },
+        { h: "License Plate Integration", p: ["A relocated license plate holder is built into the mount so the plate stays visible once the winch is installed. It has worked well in use. The one thing I would change is the finish: it was painted with spray paint, which is starting to rust through, so a more durable coating is the next improvement."] }
       ],
-      fea: { text: "ANSYS Static Structural analysis applied rated line-pull loading to confirm the mount and its frame attachment carry the load with acceptable stress margins. FEA result images coming soon.", images: [] },
+      fea: { text: "Since the mount is already built and proven through repeated use, a formal FEA is a lower priority, but a line-pull load study can be added here to quantify the margins.", images: [] },
       stls: [
         { name: "Winch Mount", file: "WinchMount.STL", desc: "Front winch mount weldment." },
         { name: "License Plate Holder", file: "LicencePlateHolder.STL", desc: "Integrated plate holder." }
@@ -541,9 +538,9 @@ const SITE = {
     },
 
     {
-      id: "diffsteering", num: "P-008", title: "Diff & Steering Stabilizer", tier: "more",
+      id: "diffsteering", num: "P-008", title: "Diff & Steering Stabilizer", tier: "top", order: 8,
       tags: ["Scan-to-CAD", "SolidWorks", "Fabrication"],
-      desc: "A differential and steering stabilizer bracket developed from scan data of the front diff and steering components.",
+      desc: "A scan-to-CAD steering stabilizer bracket, welded and installed on a friend's truck.",
       folder: "OtherSmallProjects",
       images: ["DiffScan.jpg", "DiffSteering1.png", "DiffSteering2.png"],
       specs: [
@@ -551,9 +548,10 @@ const SITE = {
         ["Software", "MeshLab, SolidWorks"],
         ["Output", "Stabilizer bracket"]
       ],
-      lead: "A differential and steering stabilizer bracket developed from scan data of the front differential and steering components, so the bracket fits the actual hardware.",
+      lead: "A differential and steering stabilizer bracket developed from scan data, fabricated, welded, and installed. This one was built for a friend's truck as a thank-you for all the help he has given me.",
       prose: [
-        { h: "Scan-to-CAD", p: ["I scanned the front differential and steering area and used the mesh in SolidWorks to design a stabilizer bracket that references the real geometry rather than nominal dimensions."] }
+        { h: "Scan-to-CAD", p: ["I scanned the front differential and steering area and used the mesh in SolidWorks to design a stabilizer bracket that references the real geometry rather than nominal dimensions."] },
+        { h: "Built for a Friend", p: ["The bracket was welded and installed. It went on a friend's truck, so I do not have my own photos of the finished install. It was a project I took on for him as a thank-you for all the times he has helped me out."] }
       ],
       stls: [
         { name: "Diff Steering Stabilizer", file: "DiffSteeringStabalizer.STL", desc: "Steering stabilizer bracket." }
@@ -563,29 +561,35 @@ const SITE = {
     /* ── SKID PLATE SUB-PARTS ── */
 
     {
-      id: "skid_engine", num: "P-004-A", title: "Engine Skid Plate", tier: "sub", hub: "skidplates",
-      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 to v2"],
-      lead: "The front-most and most exposed skid plate, protecting the engine and oil pan. The v1 failed in the field; FEA showed why, and the v2 redesign fixed it.",
+      id: "skid_engine", num: "P-002-A", title: "Front Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["6061 Aluminum", "ANSYS FEA", "TIG Welded", "v1 to v2"],
+      lead: "The front skid plate protects the front differential and steering rack on my 2021 F-150, the components that strand the truck if they break. I designed, formed, and welded it myself, then ran a full FEA study after a real-world failure to drive the redesign.",
       folder: "SkidPlateEngine",
       images: ["SPEV1.jpg", "SPEV1-1.jpg", "SPEV1-3.png", "SPEV2.png", "SPEV2-1.png"],
-      reportPdf: { folder: "SkidPlateEngine", file: "FEAAnalysisSkidPlateReport.pdf", label: "View FEA Report (PDF)" },
+      reportPdf: { folder: "SkidPlateEngine", file: "FEAAnalysisSkidPlateReport.pdf", label: "View Full FEA Report (PDF)" },
       specs: [
-        ["Protects", "Engine, oil pan"],
-        ["Software", "SolidWorks, MeshLab, ANSYS"],
-        ["Status", "v1 failed, v2 complete"]
+        ["Protects", "Front differential, steering rack"],
+        ["Material", "6061 Aluminum, formed and TIG welded"],
+        ["Mounting", "M10 Class 10.9 bolts, welded-nut backing plates"],
+        ["Fabrication", "Cincinnati brake press, Miller AC TIG"],
+        ["Load Range", "3,000 to 15,000 lbf simulated"],
+        ["Safety Factor", "1.5 to 6.8 across load cases"],
+        ["Status", "v1 destroyed in service, v2 designed"]
       ],
       prose: [
-        { h: "Scan-to-CAD Basis", p: ["Like all the plates, the engine skid was modeled against 3D scan data of the underbody so mounting points and clearances referenced the actual truck rather than nominal CAD."] }
+        { h: "Why It Matters", p: ["The F-150 has subpar ground clearance with vital components exposed off road. The front differential sits only about 1.5 inches above the frame with no cross bracing at that location, so the breakover angle is shallow and the diff is the first thing to catch an obstacle. The steering rack sits about an inch up from the frame just ahead of it.", "This is my only vehicle, and I usually run the mountains and sand dunes alone, so protecting these parts is what gets me home. The F-150 engages 4WD at the front hubs, which means the front differential is always engaged in 4WD, exactly when I need it to get unstuck. If the diff is damaged, the truck is immobilized."] },
+        { h: "Design and Fabrication", p: ["The plate is a multi-body 6061 aluminum component with formed features and welded seams. I formed it on a Cincinnati brake press and TIG welded it on a Miller AC machine at my workplace. It bolts to custom mounting points with M10 Class 10.9 bolts, using backing plates with welded nuts to distribute load into the truck frame."] },
+        { h: "Validation Approach", p: ["I ran the FEA after fabrication specifically to compare simulation against real-world impacts. Load cases modeled rock strikes and driving over rocks from 3,000 to 15,000 lbf, applied to both the center span and the corners. Total deformation peaked at about 1.5 inches and nearly reached yield strain, with the safety factor ranging from 1.5 in extreme cases up to 6.8 for light off-road use."] }
       ],
       versions: [
-        { label: "v1", state: "failed", text: "REPLACE WITH REAL STORY. These are the real-world failure photos of the v1 engine skid plate. Describe exactly what broke and where.", images: ["SPEFail.jpg", "SPEFail1.jpg", "SPEFail2.jpg", "SPEFail3.jpg"] },
-        { label: "v2", state: "redesign", text: "REPLACE WITH REAL STORY. Describe what changed in v2 and why, based on the FEA.", images: ["SPEV2.png"] }
+        { label: "v1", state: "failed", text: "The original plate did its job on easy trails and slow technical sections, where it would carry nearly the entire weight of the front end as the truck dragged over rock at around 5 mph. Over 8 months of service deformation stayed minimal and the weld corners were the obvious weak point, with cracks starting but only propagating about half an inch. It failed completely on a recent beach run: at 45 to 50 mph I struck a rock near full suspension compression, slightly off center. The result was cracked welds that came fully apart, roughly 2 inches of deflection, and a missing fastener. The plate was driven into the steering rack and threw off my alignment.", images: ["SPEFail.jpg", "SPEFail1.jpg", "SPEFail2.jpg", "SPEFail3.jpg"] },
+        { label: "v2", state: "redesign", text: "The FEA confirmed what the failure showed: the center span has no internal structure and is where deformation concentrates, and the corner fasteners see the highest shear. The redesign adds bracing across the center span to distribute load and limit deformation, and upsizes the corner fasteners to M12 Class 10.9 for additional shear margin at the most critical bolt location.", images: ["SPEV2.png", "SPEV2-1.png"] }
       ],
       fea: {
-        text: "ANSYS Static Structural analysis of the engine skid plate. Full write-up in the FEA report PDF above.",
+        text: "Under real-world use, deformation matched the FEA prediction and the critical zones were confirmed by the physical failure. The simulation identified the unsupported center span and the corner bolt locations as the governing failure points, which became the design brief for v2. The full analysis, including all load cases and safety factors, is in the report below.",
         images: [
-          { file: "SPETDMid.png", cap: "Total deformation — mid" },
-          { file: "SPETDC.png", cap: "Total deformation — corner" }
+          { file: "SPETDMid.png", cap: "Total deformation, center span" },
+          { file: "SPETDC.png", cap: "Total deformation, corner" }
         ]
       },
       stls: [
@@ -595,24 +599,25 @@ const SITE = {
     },
 
     {
-      id: "skid_trans", num: "P-004-B", title: "Transmission Skid Plate", tier: "sub", hub: "skidplates",
-      tags: ["Scan-to-CAD", "ANSYS FEA", "v1 to v2"],
-      lead: "Mid-body skid plate protecting the transmission. Same engineering arc: a v1 that failed, FEA to diagnose it, and a v2 redesign.",
+      id: "skid_trans", num: "P-002-B", title: "Transmission Skid Plate", tier: "sub", hub: "skidplates",
+      tags: ["Scan-to-CAD", "Sheet Metal", "v1 to v2"],
+      lead: "Mid-body skid plate protecting the transmission. The v1 deflected near the mounting holes from too large an unsupported span; v2 adds gussets and dual-purpose ventilation holes that also shed accumulated sand.",
       folder: "SkidPlateTransmision",
       images: ["SPTV1-1.jpg", "SPTv1-2.png", "SPTv1-3.png", "SPTV1-4.jpg", "SPTv2-1.png", "SPTV2-2.png"],
       specs: [
         ["Protects", "Transmission"],
-        ["Software", "SolidWorks, MeshLab, ANSYS"],
-        ["Status", "v1 failed, v2 complete"]
+        ["Basis", "3D scan, verified by hand measurement"],
+        ["Software", "SolidWorks, MeshLab"],
+        ["Status", "v1 usable but deflected, v2 designed"]
       ],
       prose: [
-        { h: "Packaging", p: ["The transmission plate has to clear the crossmember and exhaust while still presenting a flat protective surface, which made its mounting strategy different from the engine plate."] }
+        { h: "Design Basis", p: ["Like the front plate, the transmission skid was 3D scanned for overall geometry. For the critical mounting locations I verified the scan against real measurements with a tape and square, since the scan data ran slightly off. Every important mounting location and imported feature is double checked against physical measurement before it drives the model."] }
       ],
       versions: [
-        { label: "v1", state: "failed", text: "REPLACE WITH REAL STORY. Describe how the v1 transmission plate failed and where.", images: ["SPTV1-1.jpg", "SPTv1-2.png"] },
-        { label: "v2", state: "redesign", text: "REPLACE WITH REAL STORY. Describe the v2 changes driven by the FEA.", images: ["SPTv2-1.png", "SPTV2-2.png"] }
+        { label: "v1", state: "failed", text: "The transmission plate failed, but far less dramatically than the front plate. It deflected near the mounting holes next to the formed section. With no gussets, the large span of unsupported material let the forms weaken under load. It is still usable, but the deflection made clear the span needed support. A secondary nuisance also showed up: sand accumulated near the main braces with no way to escape, leaving a perpetual mound of sand under the truck.", images: ["SPTV1-1.jpg", "SPTv1-2.png", "SPTv1-3.png", "SPTV1-4.jpg"] },
+        { label: "v2", state: "redesign", text: "Version 2 adds gussets to support the unsupported span and stop the deflection at the mounting holes. It also adds ventilation holes that serve two purposes: reducing weight and, importantly, letting accumulated sand shed out instead of building up under the truck.", images: ["SPTv2-1.png", "SPTV2-2.png"] }
       ],
-      fea: { text: "REPLACE WITH REAL FEA NOTES. ANSYS analysis identified the failure origin and quantified the improvement from the revised design.", images: [] },
+      fea: { text: "A dedicated FEA study of the transmission plate is in progress and will be added here, focused on confirming that the added gussets resolve the center-span deflection seen in service.", images: [] },
       stls: [
         { name: "Trans Skid v1", file: "SkidPlateTransmisionFormed.STL", desc: "Original transmission skid plate." },
         { name: "Trans Skid v2", file: "SkidPlateTransmisionFormedV2.STL", desc: "Redesigned transmission skid plate." }
@@ -620,21 +625,22 @@ const SITE = {
     },
 
     {
-      id: "skid_transfer", num: "P-004-C", title: "Transfer Case Skid Plate", tier: "sub", hub: "skidplates",
+      id: "skid_transfer", num: "P-002-C", title: "Transfer Case Skid Plate", tier: "sub", hub: "skidplates",
       tags: ["Scan-to-CAD", "SolidWorks", "v1"],
-      lead: "Rear-most drivetrain skid plate protecting the transfer case. v1 documented; FEA and v2 in progress.",
+      lead: "Rear-most drivetrain skid plate protecting the transfer case. Its v1 failure was an honest installation error rather than a design flaw, a distinction worth being clear about.",
       folder: "SkidPlateTransferCase",
       images: ["SPTCv1-1.png", "SPTCV1-2.jpg"],
       specs: [
         ["Protects", "Transfer case"],
-        ["Software", "SolidWorks, MeshLab, ANSYS"],
-        ["Status", "v1 documented, v2 in progress"]
+        ["Basis", "3D scan, verified by hand measurement"],
+        ["Software", "SolidWorks, MeshLab"],
+        ["Status", "v1 failed on install error, FEA and v2 next"]
       ],
       prose: [
-        { h: "Position", p: ["The transfer case plate sits at the rear of the protected drivetrain run and ties into the crossmember, completing the underbody armor."] }
+        { h: "Design Basis", p: ["The transfer case plate was 3D scanned like the others, with critical mounting dimensions verified by hand using a tape and square so the model references the real truck rather than slightly-off scan data."] }
       ],
       versions: [
-        { label: "v1", state: "failed", text: "REPLACE WITH REAL STORY. Describe the v1 transfer case plate and how it performed.", images: ["SPTCv1-1.png", "SPTCV1-2.jpg"] }
+        { label: "v1", state: "failed", text: "The transfer case plate failed, but the cause was human error, not the design. I installed it incorrectly and the bolts were not properly tightened. They loosened in service, the plate dropped enough to catch on material, and it folded. Calling this out matters: it was an installation and torque problem, not a structural design failure, and the fix is correct installation plus a dedicated FEA to confirm the design before the next build.", images: ["SPTCv1-1.png", "SPTCV1-2.jpg"] }
       ],
       stls: [
         { name: "Transfer Case Skid", file: "TransferCaseSkidPlateFormed.STL", desc: "Transfer case skid plate." }
@@ -666,6 +672,7 @@ SITE.projects.forEach(p => {
   const dir = projDir(p);
   const stlDir = (p.stlFolder !== undefined) ? dirOf(p.stlFolder) : dir;
   p.images = (p.images || []).map(f => dir + enc(f));
+  if (p.thumb) p.thumb = dir + enc(p.thumb);
   p.stls = (p.stls || []).map(m => Object.assign({}, m, { file: stlDir + enc(m.file) }));
   if (p.versions) p.versions = p.versions.map(v => Object.assign({}, v, {
     images: (v.images || (v.image ? [v.image] : [])).map(f => dir + enc(f))
@@ -700,7 +707,7 @@ function applyPortrait() {
 
 // ── LANDING CARDS ──
 function buildCard(p) {
-  const img = firstImage(p);
+  const img = p.thumb || firstImage(p);
   const thumb = img ? '<img src="' + img + '" alt="">' : pendingBox(p.id);
   const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
   return '<div class="project-card" id="card-' + p.id + '">' +
@@ -716,31 +723,11 @@ function buildCard(p) {
     '</div></div></div>';
 }
 
-let moreShown = 0;
-const MORE_BATCH = 4;
 function renderCards() {
   const grid = document.getElementById('projects-grid');
-  const top = SITE.projects.filter(p => p.tier === 'top');
+  const top = SITE.projects.filter(p => p.tier === 'top')
+    .sort((a, b) => (a.order || 99) - (b.order || 99));
   grid.innerHTML = top.map(buildCard).join('');
-  // more projects: start hidden, reveal in batches
-  moreShown = 0;
-  document.getElementById('more-grid').innerHTML = '';
-  const more = SITE.projects.filter(p => p.tier === 'more');
-  if (more.length === 0) { document.getElementById('more-controls').style.display = 'none'; return; }
-  showMoreTiles();
-}
-function showMoreTiles() {
-  const more = SITE.projects.filter(p => p.tier === 'more');
-  const grid = document.getElementById('more-grid');
-  const next = more.slice(moreShown, moreShown + MORE_BATCH);
-  next.forEach(p => { grid.insertAdjacentHTML('beforeend', buildCard(p)); });
-  moreShown += next.length;
-  const btn = document.getElementById('show-more-btn');
-  if (moreShown >= more.length) {
-    document.getElementById('more-controls').style.display = 'none';
-  } else {
-    btn.innerHTML = 'Show more projects <span style="color:var(--amber)">+</span>';
-  }
 }
 
 // accordion: only one open; click elsewhere closes all
