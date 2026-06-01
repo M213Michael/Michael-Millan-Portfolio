@@ -189,6 +189,14 @@
   .fea-vid { margin: 0; border: 1px solid var(--border2); background: var(--bg2); overflow: hidden; }
   .fea-vid video { width: 100%; display: block; background: #000; }
   .fea-vid figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; color: var(--text3); text-transform: uppercase; padding: 6px 8px; border-top: 1px solid var(--border); }
+  .sweep-vid { margin: 0 0 1.5rem; max-width: 760px; border: 1px solid var(--border2); background: #000; overflow: hidden; }
+  .sweep-vid video { width: 100%; display: block; }
+  .sweep-vid figcaption { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--text3); text-transform: uppercase; padding: 8px 10px; border-top: 1px solid var(--border); background: var(--bg2); }
+  .ds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; }
+  .ds-cell { margin: 0; border: 1px solid var(--border2); background: var(--bg2); overflow: hidden; }
+  .ds-cell img { width: 100%; aspect-ratio: 16/10; object-fit: cover; background: #fff; display: block; cursor: pointer; transition: opacity 0.2s; }
+  .ds-cell img:hover { opacity: 0.88; }
+  .ds-cell figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.05em; color: var(--text3); text-transform: uppercase; padding: 8px 10px; border-top: 1px solid var(--border); line-height: 1.4; }
 
   .detail-gallery-section { padding: 4rem 3rem; border-bottom: 1px solid var(--border); }
   .detail-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
@@ -455,10 +463,19 @@ const SITE = {
 
     {
       id: "suspension", num: "P-001", title: "Long-Travel Suspension", tier: "top", order: 1,
-      tags: ["SolidWorks", "ANSYS FEA", "Kinematics"],
+      tags: ["SolidWorks", "Kinematics", "Design Study"],
       desc: "An in-progress long-travel front suspension targeting ~14 inches of wheel travel. Full kinematic sweep complete; currently designing the control arms.",
       folder: "Suspension",
       images: ["Scan.jpg", "Scan1.jpg"],
+      sweepVideo: { file: "LTwheelsweep.mp4", cap: "SolidWorks kinematic sweep, full travel" },
+      designStudy: [
+        { file: "D1.png", cap: "LCA+3, UCA+3, 18in width w/ steering — LCA vs outboard CV angle" },
+        { file: "D2.png", cap: "Stock 9in width w/ steering — LCA vs outboard CV angle" },
+        { file: "D3.png", cap: "Bump steer vs LCA Z — stock vs +3 LCA/UCA" },
+        { file: "D4.png", cap: "Bump steer — inner tie rod / rack height sweep" },
+        { file: "D5.png", cap: "Bump steer fine adjustment — rack height -0.125 optimal" },
+        { file: "D6.png", cap: "LCA bearing angle optimization (contour)" }
+      ],
       specs: [
         ["Vehicle", "2021 Ford F-150"],
         ["Travel Goal", "~14 in front (15 in safe max with stock spindle)"],
@@ -472,7 +489,11 @@ const SITE = {
         { h: "Kinematic Study", p: ["I have completed a full kinematic sweep, cycling the suspension through its travel across different lower control arm heights and steering positions to confirm everything clears. The geometry checks out through the range of motion. I am now designing the upper and lower control arms themselves."] },
         { h: "Open Problems", p: ["Two things I am still working through: CV axle angle through the travel range, and packaging the upper shock tab. I would like to run a Fox 3.0 by 14 inch internal bypass, but there is interference with the unibody where the fender attaches to the frame. Once the uppers and lowers are finalized they will be developed into a fabricatable sheet metal design. At this stage everything is theoretical and nothing has been built yet."] }
       ],
-      stls: []
+      stls: [
+        { name: "Upper Control Arm", file: "UpperControlArm.STL", desc: "Long-travel upper control arm." },
+        { name: "Lower Arm Pocket", file: "LowerArmPocket.STL", desc: "Lower control arm pocket." },
+        { name: "Knuckle", file: "Knuckle.STL", desc: "Front knuckle." }
+      ]
     },
 
     {
@@ -820,6 +841,8 @@ SITE.projects.forEach(p => {
   const stlDir = (p.stlFolder !== undefined) ? dirOf(p.stlFolder) : dir;
   p.images = (p.images || []).map(f => dir + enc(f));
   if (p.thumb) p.thumb = dir + enc(p.thumb);
+  if (p.designStudy) p.designStudy = p.designStudy.map(d => ({ src: dir + enc(d.file), cap: d.cap || '' }));
+  if (p.sweepVideo) p.sweepVideo = { src: dir + enc(p.sweepVideo.file), cap: p.sweepVideo.cap || '' };
   p.stls = (p.stls || []).map(m => Object.assign({}, m, { file: stlDir + enc(m.file) }));
   if (p.versions) p.versions = p.versions.map(v => Object.assign({}, v, {
     images: (v.images || (v.image ? [v.image] : [])).map(f => dir + enc(f))
@@ -1061,7 +1084,24 @@ function buildDetailPage(p) {
   const backTarget = p.hub ? p.hub : 'projects';
   const backLabel = p.hub ? 'Back to ' + byId[p.hub].title : 'Back to projects';
 
-  return '<div class="page detail-page" id="page-' + p.id + '">' +
+  // Design Study section (suspension etc.) — sweep video + captioned chart grid
+  let designStudyHtml = '';
+  if ((p.designStudy && p.designStudy.length) || p.sweepVideo) {
+    let inner = '';
+    if (p.sweepVideo) {
+      inner += '<figure class="sweep-vid"><video src="' + p.sweepVideo.src + '" autoplay loop muted playsinline></video>' + (p.sweepVideo.cap ? '<figcaption>' + p.sweepVideo.cap + '</figcaption>' : '') + '</figure>';
+    }
+    if (p.designStudy && p.designStudy.length) {
+      inner += '<div class="ds-grid">' + p.designStudy.map(d =>
+        '<figure class="ds-cell"><img src="' + d.src + '" alt="" loading="lazy" onclick="openLightbox(\'' + d.src + '\')"><figcaption>' + d.cap + '</figcaption></figure>'
+      ).join('') + '</div>';
+    }
+    designStudyHtml = '<div class="detail-body-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Design Study</h2><div class="section-line"></div></div>' +
+      '<p style="font-size:14px; font-weight:300; color:var(--text2); line-height:1.7; max-width:680px; margin-bottom:1.5rem;">Parametric SolidWorks design studies sweeping suspension geometry to optimize CV angle, bump steer, and bearing angles across the full travel range.</p>' +
+      inner + '</div>';
+  }
+
+    return '<div class="page detail-page" id="page-' + p.id + '">' +
     '<div class="detail-hero"><button class="detail-back" onclick="openDetail(\'' + (p.hub || '__projects') + '\')">' + backLabel + '</button>' +
       '<div class="detail-hero-grid"><div>' +
         '<div class="detail-page-num">' + p.num + '</div>' +
@@ -1073,6 +1113,7 @@ function buildDetailPage(p) {
       '<div class="detail-specs-panel"><h4>Project Specs</h4>' + specs + '</div>' +
       '<div class="detail-prose">' + prose + versionsHtml + feaHtml + callout + (hubPdf || '') + '</div>' +
     '</div></div>' +
+    designStudyHtml +
     '<div class="detail-body-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">3D Models</h2><div class="section-line"></div></div>' + viewer + '</div>' +
     '<div class="detail-gallery-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Documentation</h2><div class="section-line"></div></div>' +
       '<div class="detail-gallery">' + gallery + '</div>' +
