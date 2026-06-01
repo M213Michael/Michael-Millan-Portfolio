@@ -167,6 +167,10 @@
   .fea-gif { margin: 1.5rem 0; max-width: 680px; }
   .fea-gif img { width: 100%; border: 1px solid var(--border2); background: var(--bg2); display: block; }
   .fea-gif figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; color: var(--text3); text-transform: uppercase; padding: 6px 2px; }
+  .fea-vid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin: 1.5rem 0; max-width: 680px; }
+  .fea-vid { margin: 0; border: 1px solid var(--border2); background: var(--bg2); overflow: hidden; }
+  .fea-vid video { width: 100%; display: block; background: #000; }
+  .fea-vid figcaption { font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; color: var(--text3); text-transform: uppercase; padding: 6px 8px; border-top: 1px solid var(--border); }
 
   .detail-gallery-section { padding: 4rem 3rem; border-bottom: 1px solid var(--border); }
   .detail-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
@@ -558,7 +562,21 @@ const SITE = {
         { h: "Function", p: ["The winch mount transfers winch line pull into the frame. It has been fabricated, installed, and used multiple times, and so far everything has worked well under real recovery loads."] },
         { h: "License Plate Integration", p: ["A relocated license plate holder is built into the mount so the plate stays visible once the winch is installed. It has worked well in use. The one thing I would change is the finish: it was painted with spray paint, which is starting to rust through, so a more durable coating is the next improvement."] }
       ],
-      fea: { thumb: "Winch1.png", summary: "Line-pull load study to quantify stress margins on the already-proven winch mount.", reportStatus: "in-progress", gifs: [], text: "Since the mount is already built and proven through repeated use, a formal FEA is a lower priority, but a line-pull load study can be added here to quantify the margins.", images: [] },
+      fea: {
+        thumb: "W18kTD.png",
+        summary: "Total deformation under 12k and 18k lbf line-pull loads, quantifying the margins on the already-proven winch mount.",
+        reportStatus: "coming-soon",
+        videos: [
+          { file: "W12kTD.mp4", cap: "12k lbf line pull — total deformation" },
+          { file: "W18kTD.mp4", cap: "18k lbf line pull — total deformation" }
+        ],
+        gifs: [],
+        text: "The winch mount FEA applies 12,000 and 18,000 lbf line-pull loads to map total deformation and confirm the mount carries rated and over-rated pull with margin. The mount has already proven itself through repeated real-world recoveries; this puts numbers to that performance.",
+        images: [
+          { file: "W12kTD.png", cap: "12k lbf line pull — total deformation" },
+          { file: "W18kTD.png", cap: "18k lbf line pull — total deformation" }
+        ]
+      },
       stls: [
         { name: "Winch Mount", file: "WinchMount.STL", desc: "Front winch mount weldment." },
         { name: "License Plate Holder", file: "LicencePlateHolder.STL", desc: "Integrated plate holder." }
@@ -649,7 +667,27 @@ const SITE = {
         { label: "v1", state: "failed", text: "The transmission plate failed, but far less dramatically than the front plate. It deflected near the mounting holes next to the formed section. With no gussets, the large span of unsupported material let the forms weaken under load. It is still usable, but the deflection made clear the span needed support. A secondary nuisance also showed up: sand accumulated near the main braces with no way to escape, leaving a perpetual mound of sand under the truck.", images: ["SPTV1-1.jpg", "SPTv1-2.png", "SPTv1-3.png", "SPTV1-4.jpg"] },
         { label: "v2", state: "redesign", text: "Version 2 adds gussets to support the unsupported span and stop the deflection at the mounting holes. It also adds ventilation holes that serve two purposes: reducing weight and, importantly, letting accumulated sand shed out instead of building up under the truck.", images: ["SPTv2-1.png", "SPTV2-2.png"] }
       ],
-      fea: { thumb: "SPTv2-1.png", summary: "Analysis of the v1 center-span deflection near the mounting holes, driving the gusseted v2 redesign. Report coming soon.", reportStatus: "coming-soon", gifs: [], text: "The transmission plate FEA is complete and a full report is coming soon. It focuses on the center-span deflection near the mounting holes seen in service and confirms that the added gussets resolve it.", images: [] },
+      fea: {
+        thumb: "SPT6kMTD.png",
+        summary: "Total deformation, equivalent stress, and elastic strain across 3k and 6k lbf load cases at the mid span and corner. Confirms the center-span deflection seen in service. Full report coming soon.",
+        reportStatus: "coming-soon",
+        videos: [
+          { file: "SPT-3kMTD.mp4", cap: "3k lbf mid span — total deformation" },
+          { file: "SPT-3kCTD.mp4", cap: "3k lbf corner — total deformation" },
+          { file: "SPT-6kMTD.mp4", cap: "6k lbf mid span — total deformation" },
+          { file: "SPT-6kCTD.mp4", cap: "6k lbf corner — total deformation" }
+        ],
+        gifs: [],
+        text: "The transmission plate FEA studies total deformation under 3,000 and 6,000 lbf loads applied at both the mid span and the corner, plus equivalent stress and equivalent elastic strain at the mid span. The results confirm the center-span deflection near the mounting holes observed in service, which the gusseted v2 addresses. A full report is coming soon.",
+        images: [
+          { file: "SPT3kMTD.png", cap: "3k lbf mid span — total deformation" },
+          { file: "SPT3kCTD.png", cap: "3k lbf corner — total deformation" },
+          { file: "SPT6kMTD.png", cap: "6k lbf mid span — total deformation" },
+          { file: "SPT6kCTD.png", cap: "6k lbf corner — total deformation" },
+          { file: "SPT-3kM-EQS.png", cap: "3k lbf mid span — equivalent stress" },
+          { file: "SPT-3kM-EQES.png", cap: "3k lbf mid span — equivalent elastic strain" }
+        ]
+      },
       stls: [
         { name: "Trans Skid v1", file: "SkidPlateTransmisionFormed.STL", desc: "Original transmission skid plate." },
         { name: "Trans Skid v2", file: "SkidPlateTransmisionFormedV2.STL", desc: "Redesigned transmission skid plate." }
@@ -716,8 +754,11 @@ SITE.projects.forEach(p => {
     const feaGifs = (p.fea.gifs || []).map(g => (typeof g === 'string')
       ? { src: dir + enc(g), cap: '' }
       : { src: dir + enc(g.file), cap: g.cap || '' });
+    const feaVids = (p.fea.videos || []).map(v => (typeof v === 'string')
+      ? { src: dir + enc(v), cap: '' }
+      : { src: dir + enc(v.file), cap: v.cap || '' });
     const feaThumb = p.fea.thumb ? dir + enc(p.fea.thumb) : null;
-    p.fea = Object.assign({}, p.fea, { images: feaImgs, gifs: feaGifs, thumbSrc: feaThumb });
+    p.fea = Object.assign({}, p.fea, { images: feaImgs, gifs: feaGifs, videos: feaVids, thumbSrc: feaThumb });
   }
   if (p.reportPdf) p.reportPdf = Object.assign({}, p.reportPdf, { src: dirOf(p.reportPdf.folder) + enc(p.reportPdf.file) });
 });
@@ -863,10 +904,14 @@ function buildDetailPage(p) {
     if (!gifs || !gifs.length) return '';
     return gifs.map(g => '<figure class="fea-gif"><img src="' + g.src + '" alt="" loading="lazy">' + (g.cap ? '<figcaption>' + g.cap + '</figcaption>' : '') + '</figure>').join('');
   }
+  function vidRow(vids) {
+    if (!vids || !vids.length) return '';
+    return '<div class="fea-vid-grid">' + vids.map(v => '<figure class="fea-vid"><video src="' + v.src + '" autoplay loop muted playsinline></video>' + (v.cap ? '<figcaption>' + v.cap + '</figcaption>' : '') + '</figure>').join('') + '</div>';
+  }
   function feaBlock(fea, heading) {
     if (!fea) return '';
     const imgs = (fea.images && fea.images.length) ? imgRow(fea.images, p.id + '_fea.jpg') : '';
-    return '<h3>' + heading + '</h3><p>' + fea.text + '</p>' + gifRow(fea.gifs) + imgs;
+    return '<h3>' + heading + '</h3><p>' + fea.text + '</p>' + vidRow(fea.videos) + gifRow(fea.gifs) + imgs;
   }
   const pdfBtn = p.reportPdf ? '<a class="pdf-btn" href="' + p.reportPdf.src + '" target="_blank" rel="noopener">' + (p.reportPdf.label || 'View Report (PDF)') + '</a>' : '';
 
