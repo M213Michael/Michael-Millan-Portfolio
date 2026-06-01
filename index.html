@@ -52,6 +52,7 @@
   .hero-portrait-wrap { position: relative; z-index: 2; align-self: end; margin-bottom: 1rem; }
   .hero-portrait { width: 100%; aspect-ratio: 4/5; background: var(--bg2); border: 1px solid var(--border2); position: relative; overflow: hidden; }
   .hero-portrait img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-portrait video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .portrait-corner { position: absolute; width: 14px; height: 14px; border-color: var(--amber); z-index: 3; }
   .portrait-corner.tl { top: 8px; left: 8px; border-top: 1px solid; border-left: 1px solid; }
   .portrait-corner.br { bottom: 8px; right: 8px; border-bottom: 1px solid; border-right: 1px solid; }
@@ -386,7 +387,7 @@
 
 const SITE = {
   base: "Pictures",
-  portrait: { folder: "RockSliders", file: "selfie1.jpg" },  // you working on the rock sliders
+  portrait: { folder: "RockSliders", file: "Selfie2.mp4", video: true },  // grinding in the shop (looping video)
 
   projects: [
 
@@ -538,7 +539,7 @@ const SITE = {
       tags: ["Weldments", "ANSYS FEA", "Fabrication"],
       desc: "Bolt-on rock sliders, built and installed. Proven by jacking the truck off a single slider until the wheel lifted off the ground.",
       folder: "RockSliders",
-      images: ["Jack.jpg", "RSISO.png", "RSBottomISO.png", "Fab.jpg", "selfie1.jpg"],
+      images: ["RSISO.png", "RSBottomISO.png", "RS1.jpg", "Fab.jpg", "RS3.jpg", "RS2.jpg", "Jack.jpg", "selfie1.jpg"],
       specs: [
         ["Type", "Tubular and plate weldment"],
         ["Software", "SolidWorks, ANSYS Mechanical"],
@@ -547,7 +548,7 @@ const SITE = {
       lead: "Bolt-on rock sliders protecting the rocker panels and doubling as a jacking and recovery point. These are built, installed, and proven: the truck has had its full weight on a single slider with no issue.",
       prose: [
         { h: "Function", p: ["Rock sliders protect the rockers on the trail and serve as a structural jacking and recovery point, which means they have to carry the full weight of the truck at a single contact."] },
-        { h: "Built and Proven", p: ["These are fabricated, installed, and tested in the real world. The truck has teetered on the sliders with its full weight on them and nothing moved. There is a photo here of the truck on a hi-lift jack lifting a wheel clear off the ground, supported entirely by a slider, so the design is proven under the load it was built for."] }
+        { h: "Built and Proven", p: ["These are fabricated, installed, and tested in the real world. The gallery shows the first test fit in the shop before final welding, a close-up of a triple-pass MIG fillet weld at the frame mounts, and the payoff: the truck high-centered on the trail with its entire weight carried on the sliders, plus a hi-lift jack lifting a wheel clear off the ground supported entirely by a slider. The design is proven under exactly the load it was built for."] }
       ],
       fea: { thumb: "RSISO.png", summary: "Full-vehicle-weight point-load study to quantify what the hi-lift jack test already proved in the field.", reportStatus: "in-progress", gifs: [], text: "A formal FEA applying full vehicle weight as a point load is planned to put numbers to what the hi-lift test already demonstrated in the field. Results will be added here.", images: [] },
       stls: [
@@ -598,7 +599,7 @@ const SITE = {
       tags: ["Scan-to-CAD", "SolidWorks", "Fabrication"],
       desc: "A scan-to-CAD steering stabilizer bracket, welded and installed on a friend's truck.",
       folder: "OtherSmallProjects",
-      images: ["DiffScan.jpg", "DiffSteering1.png", "DiffSteering2.png"],
+      images: ["DiffSteering1.png", "DiffSteering2.png", "DS1.jpg", "DS2.jpg", "DiffScan.jpg"],
       specs: [
         ["Basis", "3D scan of front diff and steering"],
         ["Software", "MeshLab, SolidWorks"],
@@ -607,7 +608,7 @@ const SITE = {
       lead: "A differential and steering stabilizer bracket developed from scan data, fabricated, welded, and installed. This one was built for a friend's truck as a thank-you for all the help he has given me.",
       prose: [
         { h: "Scan-to-CAD", p: ["I scanned the front differential and steering area and used the mesh in SolidWorks to design a stabilizer bracket that references the real geometry rather than nominal dimensions."] },
-        { h: "Built for a Friend", p: ["The bracket was welded and installed. It went on a friend's truck, so I do not have my own photos of the finished install. It was a project I took on for him as a thank-you for all the times he has helped me out."] }
+        { h: "Fabrication", p: ["The gallery shows the process: all the components plasma cut and laid out ready to form, then formed and tacked together ready to be welded out. The bracket was welded and installed on a friend's truck, a project I took on for him as a thank-you for all the times he has helped me out, so the finished install photos live on his rig."] }
       ],
       stls: [
         { name: "Diff Steering Stabilizer", file: "DiffSteeringStabalizer.STL", desc: "Steering stabilizer bracket." }
@@ -782,7 +783,7 @@ SITE.projects.filter(p => p.hubStls && p.subParts).forEach(hub => {
   hub.subParts.forEach(sid => { const sp = byId[sid]; (sp.stls || []).forEach(m => all.push(Object.assign({ _from: sp.title }, m))); });
   hub.stls = all;
 });
-if (SITE.portrait) SITE.portrait = dirOf(SITE.portrait.folder) + enc(SITE.portrait.file);
+if (SITE.portrait) SITE.portrait = { src: dirOf(SITE.portrait.folder) + enc(SITE.portrait.file), video: !!SITE.portrait.video };
 
 
 function pendingBox(label) {
@@ -793,7 +794,12 @@ function firstImage(p) { return (p.images && p.images.length) ? p.images[0] : nu
 // ── PORTRAIT ──
 function applyPortrait() {
   if (!SITE.portrait) return;
-  document.getElementById('portrait-box').innerHTML = '<img src="' + SITE.portrait + '" alt="Michael Millan">';
+  const box = document.getElementById('portrait-box');
+  if (SITE.portrait.video) {
+    box.innerHTML = '<video src="' + SITE.portrait.src + '" autoplay loop muted playsinline></video>';
+  } else {
+    box.innerHTML = '<img src="' + SITE.portrait.src + '" alt="Michael Millan">';
+  }
 }
 
 // ── LANDING CARDS ──
