@@ -1324,8 +1324,14 @@ function ensureViewer(vid) {
 /* ════════════════ SUSPENSION CUSTOM DETAIL PAGE ════════════════ */
 function buildSuspensionPage(p) {
   const vid = 'v_' + p.id;
-  const dir = projDir(p);
-  function enc2(s){ return s.indexOf('%') !== -1 ? s : encodeURIComponent(s); }
+
+  // pre-resolved design study images by index
+  const ds = p.designStudy || [];
+  function dsImg(i, extraStyle) {
+    if (!ds[i]) return '';
+    const s = extraStyle || '';
+    return '<figure class="ds-cell" style="margin:1rem 0;' + s + '"><img src="' + ds[i].src + '" alt="" loading="lazy" style="width:100%;display:block;cursor:pointer;border:1px solid var(--border2)" onclick="openLightbox(\'' + ds[i].src + '\')"><figcaption style="font-family:var(--mono);font-size:9px;letter-spacing:0.06em;color:var(--text3);text-transform:uppercase;padding:6px 2px;border-top:1px solid var(--border)">' + ds[i].cap + '</figcaption></figure>';
+  }
 
   const modelListHtml = p.stls.map((m, i) =>
     '<div class="model-item" id="' + vid + '-item-' + i + '" onclick="ensureViewer(\'' + vid + '\').load(' + i + ')"><div class="model-item-name">' + m.name + '</div><div class="model-item-desc">' + m.desc + '</div></div>'
@@ -1344,27 +1350,14 @@ function buildSuspensionPage(p) {
         '<div class="viewer-status"><div class="status-dot" data-dot="' + vid + '"></div><span data-status="' + vid + '">Ready — choose a model</span></div>' +
       '</div></div>';
 
-  let sweepHtml = '';
-  if (p.sweepVideo) {
-    sweepHtml = '<div class="detail-body-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Kinematic Sweep</h2><div class="section-line"></div></div>' +
-      '<figure class="sweep-vid"><video src="' + p.sweepVideo.src + '" autoplay loop muted playsinline></video>' +
-      (p.sweepVideo.cap ? '<figcaption>' + p.sweepVideo.cap + '</figcaption>' : '') + '</figure></div>';
-  }
-
-  let dsHtml = '';
-  if (p.designStudy && p.designStudy.length) {
-    dsHtml = '<div class="detail-body-section"><div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Design Study Output</h2><div class="section-line"></div></div>' +
-      '<p style="font-size:14px;font-weight:300;color:var(--text2);line-height:1.7;max-width:680px;margin-bottom:1.5rem">Raw parametric design study outputs exported from SolidWorks and visualized in Excel. Each chart represents a sweep of one geometric variable across the full travel range.</p>' +
-      '<div class="ds-grid">' + p.designStudy.map(d =>
-        '<figure class="ds-cell"><img src="' + d.src + '" alt="" loading="lazy" onclick="openLightbox(\'' + d.src + '\')"><figcaption>' + d.cap + '</figcaption></figure>'
-      ).join('') + '</div></div>';
-  }
-
   const heroImg = (p.images && p.images.length) ? '<img id="hero-img-suspension" src="' + p.images[0] + '" alt="">' : '';
   const heroThumbs = (p.images && p.images.length > 1) ?
     '<div class="hero-thumbs" id="hero-thumbs-suspension">' +
     p.images.map((src, i) => '<div class="hero-thumb' + (i===0?' active':'') + '" onclick="heroSet(\'suspension\',' + i + ')"><img src="' + src + '" alt=""></div>').join('') + '</div>' : '';
   const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+
+  const sweepVideo = p.sweepVideo ?
+    '<figure class="sweep-vid" style="margin:1.5rem 0"><video src="' + p.sweepVideo.src + '" autoplay loop muted playsinline></video><figcaption>' + p.sweepVideo.cap + '</figcaption></figure>' : '';
 
   return `<div class="page detail-page" id="page-suspension">
 <div class="detail-hero">
@@ -1373,7 +1366,7 @@ function buildSuspensionPage(p) {
     <div>
       <div class="detail-page-num">P-001</div>
       <h1 class="detail-page-title">Long-Travel<br>Front Suspension</h1>
-      <p class="detail-page-lead">A ground-up long-travel front suspension design for a 2021 F-150, targeting ±9" of wheel travel. Every geometric decision was made through multi-stage parametric design studies rather than adopted from rule-of-thumb or existing aftermarket designs.</p>
+      <p class="detail-page-lead">A ground-up long-travel front suspension design for a 2021 F-150, targeting ±9" of wheel travel. No kit. No template. Every geometric decision was made through multi-stage parametric design studies in SolidWorks, validated against real bearing limits and packaging constraints.</p>
       <div class="detail-page-tags">${tags}</div>
     </div>
     <div class="hero-gallery">
@@ -1383,69 +1376,208 @@ function buildSuspensionPage(p) {
   </div>
 </div>
 
+<!-- ── GOALS & CONSTRAINTS ── -->
+<div class="detail-body-section" style="background:var(--bg2)">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Goals &amp; Constraints</h2><div class="section-line"></div></div>
+  <p style="font-size:0.95rem;font-weight:300;color:var(--text2);line-height:1.85;max-width:720px;margin-bottom:2rem">A stock F-150 has roughly 7" of front wheel travel and leaves the differential, steering rack, and transmission exposed with minimal ground clearance. The dunes and mountain trails I run on demand more travel, more clearance, and more thermal capacity — and the stock geometry cannot provide them. This project replaces the entire front suspension geometry from scratch.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem">Design Goals</div>
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border)">
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--amber);font-family:var(--mono);font-size:11px;flex-shrink:0">▸</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">±9" of wheel travel</div><div style="font-size:12px;font-weight:300;color:var(--text2)">18" total — more than double the stock geometry, sized for dunes and mountain trails</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--amber);font-family:var(--mono);font-size:11px;flex-shrink:0">▸</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Zero bump steer through functional travel</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Wheel must not steer itself under suspension compression or droop</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--amber);font-family:var(--mono);font-size:11px;flex-shrink:0">▸</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Rising motion ratio into bump</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Suspension stiffens progressively through the hardest-used travel region</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--amber);font-family:var(--mono);font-size:11px;flex-shrink:0">▸</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Thermal capacity for sustained dune use</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Transmission overheating was documented at the dunes — the shock selection reflects a real thermal requirement</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--amber);font-family:var(--mono);font-size:11px;flex-shrink:0">▸</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Upgrade path to full ±9"</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Geometry designed for ±9" from day one — current ±7" limit is a knuckle constraint, not a geometry one</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--text3);text-transform:uppercase;margin-bottom:1rem">Hard Constraints</div>
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border)">
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;flex-shrink:0">—</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">30° spherical bearing misalignment limit</div><div style="font-size:12px;font-weight:300;color:var(--text2)">McMaster 4158N15 — must not exceed rating at any combination of travel and steering</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;flex-shrink:0">—</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">12" Fox shock stroke — fixed</div><div style="font-size:12px;font-weight:300;color:var(--text2)">All geometry must fit within this stroke; no overrun under any travel combination</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;flex-shrink:0">—</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">UCA geometry must remain triangular</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Upper eye position constrained to Z≤11.5" before the UCA deforms into an impractical U-shape</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;flex-shrink:0">—</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">No out-of-plane shaft loading</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Upper and lower shock eyes must share the same fore-aft sweep plane through full travel</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem;align-items:baseline"><span style="color:var(--text3);font-family:var(--mono);font-size:11px;flex-shrink:0">—</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Steering limited to 40°</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Combined travel and steering envelope validated to this limit; 45° pushes bearing over rating</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Outcome summary -->
+  <div style="margin-top:2rem">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem">What Was Achieved</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)">
+      <div style="background:var(--bg);padding:1.25rem"><div style="font-family:var(--condensed);font-size:1.8rem;font-weight:600;color:var(--amber)">±9"</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-top:4px">Travel target achieved geometrically</div></div>
+      <div style="background:var(--bg);padding:1.25rem"><div style="font-family:var(--condensed);font-size:1.8rem;font-weight:600;color:var(--amber)">0.58</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-top:4px">Average motion ratio, rising into bump</div></div>
+      <div style="background:var(--bg);padding:1.25rem"><div style="font-family:var(--condensed);font-size:1.8rem;font-weight:600;color:#4a9e6b">0.7°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-top:4px">Bearing margin at worst-case combined load</div></div>
+      <div style="background:var(--bg);padding:1.25rem"><div style="font-family:var(--condensed);font-size:1.8rem;font-weight:600;color:#4a9e6b">0.1°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-top:4px">Max bump steer across functional travel</div></div>
+      <div style="background:var(--bg);padding:1.25rem"><div style="font-family:var(--condensed);font-size:1.8rem;font-weight:600;color:var(--amber)">10.4"</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-top:4px">Stroke used of 12" available</div></div>
+      <div style="background:var(--bg);padding:1.25rem"><div style="font-family:var(--condensed);font-size:1.8rem;font-weight:600;color:var(--amber)">3</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;color:var(--text3);text-transform:uppercase;margin-top:4px">Separate multi-stage parametric sweeps</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── METHODOLOGY + SWEEP VIDEO ── -->
 <div class="detail-body-section">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Methodology</h2><div class="section-line"></div></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start">
+    <div>
+      <p style="font-size:0.95rem;font-weight:300;color:var(--text2);line-height:1.85;margin-bottom:1.5rem">Every parameter in this design was determined through a coarse-to-fine parametric sweep. The process repeated for each subsystem: broad design study to find the optimum neighborhood, export to Excel pivot table, then fine sweep to lock in the exact value, then validation under combined loading. No parameter was adopted from rule-of-thumb without verification.</p>
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border)">
+        <div style="background:var(--bg2);padding:1.1rem 1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.35rem">STEP 01</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.25rem">Coarse Sweep</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Broad range, large steps — identifies the feasible region quickly before investing compute time on fine resolution.</div></div>
+        <div style="background:var(--bg2);padding:1.1rem 1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.35rem">STEP 02</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.25rem">Export + Pivot Table</div><div style="font-size:12px;font-weight:300;color:var(--text2)">SolidWorks design study results exported to Excel. Pivot tables used to visualize multi-variable output and find the optimum neighborhood.</div></div>
+        <div style="background:var(--bg2);padding:1.1rem 1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.35rem">STEP 03</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.25rem">Fine Sweep</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Narrow range centered on the coarse optimum. Confirms result, quantifies sensitivity, and locks in the final value.</div></div>
+        <div style="background:var(--bg2);padding:1.1rem 1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.35rem">STEP 04</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.25rem">Combined Validation</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Re-validated under simultaneous bump, droop, and steering — not isolated worst-case corners stacked artificially.</div></div>
+      </div>
+    </div>
+    <div>
+      ${sweepVideo}
+      <p style="font-size:12px;font-weight:300;color:var(--text2);line-height:1.6;margin-top:0.5rem">The kinematic assembly was built in SolidWorks with global variables driving all geometry parametrically. A single variable sweeps the suspension through ±9" of travel, with sensors logging wheel position, shock displacement, eye-to-eye distance, bearing misalignment angle, and shock angle at every increment.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── CV AXLE ANGLE ── -->
+<div class="detail-body-section">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">CV Axle Angle — Extended vs Stock</h2><div class="section-line"></div></div>
   <div class="detail-layout">
     <div class="detail-specs-panel" style="position:sticky;top:80px">
-      <h4>Project Specs</h4>
-      ${p.specs.map(s => '<div class="spec-row"><span class="spec-key">'+s[0]+'</span><span class="spec-val">'+s[1]+'</span></div>').join('')}
+      <h4>CV Study Results</h4>
+      <div class="sidebar-spec"><span class="sidebar-key">Track Width Change</span><span class="sidebar-val">+3" outboard (LCA and UCA)</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Steering Sweep</span><span class="sidebar-val">0° to 45° in 1° steps</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Travel Sweep</span><span class="sidebar-val">−9" to +9" in 0.5" steps</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Outputs</span><span class="sidebar-val">Outboard CV angle, inboard CV angle, axle plunge</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Purpose</span><span class="sidebar-val">Confirm axle angles stay within CV limits and establish shock clearance envelope</span></div>
     </div>
     <div class="detail-prose">
-
-      <h3>Methodology</h3>
-      <p>Every parameter in this design was determined through a coarse-to-fine parametric sweep. The process repeated for each subsystem: broad design study to find the optimum neighborhood, export to Excel pivot table, then fine sweep to lock in the exact value, then validation under combined loading. No parameter was adopted from rule-of-thumb without verification.</p>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin:1.5rem 0">
-        <div style="background:var(--bg2);padding:1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.4rem">STEP 01</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.3rem">Coarse Sweep</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Broad range, large steps. Eliminates design space efficiently.</div></div>
-        <div style="background:var(--bg2);padding:1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.4rem">STEP 02</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.3rem">Export + Pivot</div><div style="font-size:12px;font-weight:300;color:var(--text2)">SolidWorks results to Excel pivot tables for multi-variable visualization.</div></div>
-        <div style="background:var(--bg2);padding:1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.4rem">STEP 03</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.3rem">Fine Sweep</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Narrow range centered on the coarse optimum. Confirms result and quantifies sensitivity.</div></div>
-        <div style="background:var(--bg2);padding:1.25rem"><div style="font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;margin-bottom:0.4rem">STEP 04</div><div style="font-family:var(--condensed);font-size:1rem;font-weight:600;text-transform:uppercase;margin-bottom:0.3rem">Combined Validation</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Re-validated under simultaneous bump, droop, and steering — not isolated worst-case corners.</div></div>
+      <p>Before committing to the +3" LCA extension, a full CV axle angle sweep was run across the combined travel and steering envelope. Both the outboard and inboard CV joints were measured at every combination of suspension position and steering angle. The results confirmed the extended geometry stays within acceptable CV joint operating angles and established the axle path envelope that the coilover lower spring perch must clear.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1.5rem 0">
+        ${dsImg(0)}
+        ${dsImg(1)}
       </div>
+      <p style="font-size:12px;font-weight:300;color:var(--text2);line-height:1.6">Left: extended +3" geometry with steering input — outboard CV angle across travel. Right: stock 9" track width for comparison. The extended geometry shows higher angles through the droop region under steering load, which set the clearance requirement for the coilover body position.</p>
+    </div>
+  </div>
+</div>
 
-      <h3>LCA Outboard Bearing — Axis Optimization</h3>
-      <p>The outboard LCA joint must accommodate simultaneous camber change, caster change under steering, and CV axial plunge. A spherical bearing was selected — McMaster 4158N15, 25mm bore, 30° misalignment rating. The bearing's axis orientation was optimized through a three-stage design study to minimize peak misalignment across the full travel and steering envelope.</p>
-      <p>Axis 2 (front view) was far more sensitive than Axis 1 (side view). Caster change through travel is small, so Axis 1 has minimal leverage on peak misalignment. Camber change is large and asymmetric between bump and droop, making Axis 2 the dominant variable. Moving Axis 2 from 65° to 58° produced nearly all of the optimization gain.</p>
+<!-- ── BEARING AXIS ── -->
+<div class="detail-body-section">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">LCA Outboard Bearing — Axis Optimization</h2><div class="section-line"></div></div>
+  <div class="detail-layout">
+    <div class="detail-specs-panel" style="position:sticky;top:80px">
+      <h4>Selected Bearing</h4>
+      <div class="sidebar-spec"><span class="sidebar-key">Part</span><span class="sidebar-val">McMaster 4158N15</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Bore</span><span class="sidebar-val">25mm</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">OD</span><span class="sidebar-val">56mm</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Rating</span><span class="sidebar-val">30° misalignment</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Axis 1 (side view)</span><span class="sidebar-val">84°</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Axis 2 (front view)</span><span class="sidebar-val">58°</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Peak straight (±9")</span><span class="sidebar-val">27.4°</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Peak 40° steer (+9")</span><span class="sidebar-val">29.3°</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Margin at worst case</span><span class="sidebar-val">0.7° — within limit</span></div>
+    </div>
+    <div class="detail-prose">
+      <p>The outboard LCA joint must accommodate simultaneous camber change, caster change under steering, and CV axial plunge. A spherical bearing with sufficient misalignment rating is the only joint that handles all three without inducing bind. The challenge is that misalignment angle changes continuously as the suspension travels and steers — the bearing must stay below its rated limit at every combination.</p>
+      <p>The bearing axis orientation was optimized through a three-stage parametric sweep of two variables: Axis 1 (side view angle) and Axis 2 (front view angle). Axis 2 was far more sensitive — camber change through travel is large and asymmetric between bump and droop, making it the dominant variable. Moving Axis 2 from 65° to 58° produced nearly all of the optimization gain. Axis 1 had minimal leverage because caster change through travel is small.</p>
 
-      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Peak bearing misalignment — straight ahead vs 40° steering</div>
-      <div style="position:relative;width:100%;height:260px;margin-bottom:1rem">
-        <canvas id="susp-bearing-chart" role="img" aria-label="Bearing misalignment through travel, comparing straight ahead and 40 degree steering against the 30 degree rated limit">Peak misalignment: 27.49 degrees straight ahead, 29.3 degrees at full droop with 40 degree steering — both within the 30 degree limit.</canvas>
+      <!-- Contour + line chart side by side -->
+      <div style="display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start;margin:1.5rem 0">
+        <div>
+          ${dsImg(5, 'margin:0')}
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin-bottom:0.75rem">Peak misalignment — straight ahead vs 40° steering</div>
+          <div style="position:relative;height:240px">
+            <canvas id="susp-bearing-chart" role="img" aria-label="Bearing misalignment through travel, straight ahead and 40 degree steering, against the 30 degree limit"></canvas>
+          </div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:2rem">
+      <p style="font-size:12px;font-weight:300;color:var(--text2);line-height:1.6;margin-bottom:1.5rem">Left: contour plot of peak misalignment across the Axis 1 / Axis 2 design space — the selected point (84°, 58°) sits at the optimum. Right: validated misalignment through the full travel range at the selected axis orientation.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border)">
         <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">27.4°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak straight (±9" travel)</div></div>
-        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">29.3°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak @ 40° steer (+9" bump)</div></div>
+        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">29.3°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak @ 40° steer, full bump</div></div>
         <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--text3)">30.0°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Rated limit</div></div>
-        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:#4a9e6b">0.1°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Min straight (−3" travel)</div></div>
+        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:#4a9e6b">0.1°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Min straight at −3" travel</div></div>
       </div>
+    </div>
+  </div>
+</div>
 
-      <h3>Bump Steer Correction</h3>
-      <p>Bump steer occurs when the tie rod and LCA trace different arcs through travel, forcing the wheel to toe in or out without driver input. Extending the LCA outboard by 3" moved the wheel centerline and the tie rod's outboard pickup with it, but left the steering rack in its stock location. This changed the ratio of tie rod length to LCA length, disrupting the arc relationship and requiring a new correction study on the extended geometry.</p>
-      <p>Dropping the steering rack by 0.125" shifts the arc traced by the tie rod so it runs parallel to the LCA through the functional travel range. Parallel arcs produce no bump steer. A singularity at −9" (full droop) is irrelevant in practice — the wheel is unloaded at that extreme.</p>
+<!-- ── BUMP STEER ── -->
+<div class="detail-body-section">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Bump Steer Correction</h2><div class="section-line"></div></div>
+  <div class="detail-layout">
+    <div class="detail-specs-panel" style="position:sticky;top:80px">
+      <h4>Correction Results</h4>
+      <div class="sidebar-spec"><span class="sidebar-key">Rack Adjustment</span><span class="sidebar-val">−0.125" height</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Functional Range</span><span class="sidebar-val">−7" to +9" travel</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Max Bump Steer</span><span class="sidebar-val">0.41° at +9" full bump</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Typical Range</span><span class="sidebar-val">&lt;0.15° across −7" to +7"</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Droop Singularity</span><span class="sidebar-val">At −9" — wheel unloaded, irrelevant</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Tie Rod</span><span class="sidebar-val">3/4" bore chromoly heim joints</span></div>
+    </div>
+    <div class="detail-prose">
+      <p>Bump steer occurs when the tie rod and LCA trace different arcs through travel, forcing the wheel to toe in or out without driver input. The cause is always a mismatch in pivot height between the tie rod inboard pickup and the LCA inboard pivot relative to their respective outboard ends.</p>
+      <p>Extending the LCA outboard by 3" moved the wheel centerline and the tie rod's outboard pickup with it, but the steering rack remained in its stock location. This changed the effective ratio of tie rod length to LCA length, disrupting the arc relationship that existed in stock geometry and requiring a full new correction study on the extended configuration.</p>
 
-      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Toe change vs wheel travel — before and after correction</div>
-      <div style="position:relative;width:100%;height:240px;margin-bottom:2rem">
-        <canvas id="susp-bump-chart" role="img" aria-label="Bump steer comparison before and after rack height correction, showing near-zero toe change in functional range after correction">After correction, bump steer is approximately 0.1 degrees across the functional travel range from -7 to +6 inches.</canvas>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1.5rem 0 0.5rem">
+        ${dsImg(2)}
+        ${dsImg(3)}
       </div>
+      <p style="font-size:12px;font-weight:300;color:var(--text2);line-height:1.6;margin-bottom:1.5rem">Left: bump steer vs LCA position — stock geometry (near-linear) vs extended +3" geometry (parabolic curve). Right: rack height sweep showing how the correction shifts the curve. The optimal point minimizes bump steer across the functional travel range.</p>
 
-      <h3>Coilover Lower Mount — Position Optimization</h3>
-      <p>The lower mount position was swept from 30% to 70% of LCA length in 1% increments. The two governing constraints were the 12" predetermined stroke limit and packaging clearance with the UCA. A higher mount percentage increases the motion ratio — more shock displacement per inch of wheel travel, allowing softer springs — but also forces the shock body to sweep further into the UCA at full bump, and demands more stroke to cover the same wheel travel.</p>
-      <p>58% was selected as the optimum: average motion ratio of 0.58, 10.4" of stroke used, with 1.5" droop margin and 0.5" bump margin. The bump margin is tighter by design — a hydraulic bump stop will progressively resist the last inch of compression so the coilover never reaches its mechanical limit under normal use.</p>
+      ${dsImg(4)}
 
-      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Shock angle vs suspension travel — Z=11.5" selected vs alternatives</div>
-      <div style="position:relative;width:100%;height:240px;margin-bottom:2rem">
-        <canvas id="susp-mr-chart" role="img" aria-label="Shock angle through travel for three upper eye Z positions, showing Z=11.5 inches as the selected optimum balancing angle progression and UCA clearance">At Z=11.5, shock angle ranges from 80.5 degrees at droop to a minimum of 75.7 degrees at full bump before recovering. Z=14 provides better angles but conflicts with UCA geometry.</canvas>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Fine adjustment — toe change vs travel, rack 0 vs rack −0.125"</div>
+      <div style="position:relative;height:240px;margin-bottom:1rem">
+        <canvas id="susp-bump-chart" role="img" aria-label="Bump steer comparison before and after rack height correction"></canvas>
       </div>
+      <p style="font-size:12px;font-weight:300;color:var(--text2);line-height:1.6">Dropping the rack by 0.125" shifts the arc traced by the tie rod to run parallel to the LCA through functional travel. The singularity at −9" is not a concern — at full droop the wheel is unloaded and no meaningful steering force is being transmitted.</p>
+    </div>
+  </div>
+</div>
 
-      <div class="callout">
+<!-- ── LOWER MOUNT + UPPER EYE ── -->
+<div class="detail-body-section">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Coilover Geometry — Mount Position &amp; Shock Angle</h2><div class="section-line"></div></div>
+  <div class="detail-layout">
+    <div class="detail-specs-panel" style="position:sticky;top:80px">
+      <h4>Selected Geometry</h4>
+      <div class="sidebar-spec"><span class="sidebar-key">Lower Mount</span><span class="sidebar-val">58% of LCA length from inboard pivot</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Upper Eye Z</span><span class="sidebar-val">11.5" (UCA clearance limit)</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Upper Eye X</span><span class="sidebar-val">Aligned to lower eye sweep plane</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Avg Motion Ratio</span><span class="sidebar-val">≈ 0.58, rising into bump</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Eye-to-Eye Extended</span><span class="sidebar-val">32.4"</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Eye-to-Eye Compressed</span><span class="sidebar-val">22.0"</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Stroke Used</span><span class="sidebar-val">10.4" of 12"</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Droop Margin</span><span class="sidebar-val">~1.5" remaining</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Bump Margin</span><span class="sidebar-val">~0.5" (hydraulic bump stop active)</span></div>
+    </div>
+    <div class="detail-prose">
+      <h3>Lower Mount Position</h3>
+      <p>The lower mount was swept from 30% to 70% of LCA length in 1% increments. Moving the mount outboard increases the motion ratio — more shock displacement per inch of wheel travel — but also sweeps the shock body inward toward the UCA in bump, and demands more stroke to cover the same wheel travel. 58% is the optimum: sufficient MR for the spring rate targets, without exhausting stroke or conflicting with the UCA.</p>
+      <p>The bump margin of 0.5" is tighter by design. A hydraulic bump stop will progressively resist the last inch of compression so the coilover never reaches its mechanical limit. The 1.5" droop margin is intentionally larger — there is no bump stop on the droop side, so the margin must be sufficient to handle any droop overshoot.</p>
+
+      <div class="callout" style="margin:1.5rem 0">
         <div class="callout-label">Rising Rate Behavior</div>
-        <p>At the 58% position the motion ratio rises from ride height into full bump. The suspension progressively stiffens as it compresses — a natural resistance to bottoming out that complements the hydraulic bump stop.</p>
+        <p>At 58% the motion ratio is not constant — it rises from ride height into full bump. The suspension progressively stiffens through the most heavily used travel region, providing a natural resistance to bottoming out that complements the hydraulic bump stop.</p>
       </div>
 
-      <h3>Upper Mount — Shock Angle Optimization</h3>
-      <p>The upper eye position was optimized across three axes. X was fixed to the lower eye sweep plane to eliminate out-of-plane shaft bending through travel. Z (lateral) was swept and constrained to Z=11.5" by UCA geometry: beyond that point, the UCA tubes can no longer take a direct path to the outboard spherical bearing and must route around the shock body, deforming from a near-triangular shape into an impractical U-shape. Y was set to achieve correct eye-to-eye distance within Fox stroke limits.</p>
-      <p>The resulting shock angle curve is U-shaped — shallowest just past ride height, recovering toward vertical through full bump. The rising angle from ride height into bump is the critical region: the suspension progressively stiffens through the travel it uses hardest. In the droop region, the falling angle reduces effective wheel rate — a dual-rate tender and main spring system compensates by maintaining baseline spring force through droop, keeping the wheel loaded against the ground.</p>
+      <h3>Upper Eye Position — Z Sweep</h3>
+      <p>The upper eye X position was fixed to the lower eye sweep plane to eliminate out-of-plane shaft bending through travel. The Z position (lateral, inboard/outboard) was swept from Z=10" to Z=14". Moving the upper eye outboard increases shock angle toward vertical through travel — a higher angle means a higher instantaneous motion ratio and a stiffer effective spring rate at the wheel. But beyond Z=11.5", the UCA tubes can no longer converge directly on the outboard spherical bearing. They must detour around the shock body, deforming from a near-triangular arm into an impractical U-shape. Z=11.5" is a design boundary, not a hard mechanical interference.</p>
+
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Shock angle vs travel — Z=11.5" selected vs boundary cases</div>
+      <div style="position:relative;height:240px;margin-bottom:2rem">
+        <canvas id="susp-mr-chart" role="img" aria-label="Shock angle through travel at three Z positions showing Z 11.5 as the selected optimum"></canvas>
+      </div>
+
+      <h3>Shock Angle Through Travel</h3>
+      <p>With the upper eye at Z=11.5" and the lower mount at 58%, the resulting shock angle curve is U-shaped — shallowest just past ride height at +3" travel, recovering toward vertical through full bump. The rising angle from ride height into bump is the critical region: the suspension stiffens progressively through the travel it uses hardest. In the droop region, the falling angle reduces effective wheel rate — a dual-rate tender and main spring system compensates by maintaining baseline spring force through droop.</p>
 
       <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Shock angle through travel — interior angle from horizontal, front view</div>
-      <div style="position:relative;width:100%;height:260px;margin-bottom:1rem">
-        <canvas id="susp-angle-chart" role="img" aria-label="Shock angle through suspension travel from full droop to full bump, showing a U-shaped curve with minimum just past ride height and recovery to 82.19 degrees at full bump">Shock angle forms a U-curve: 84.65 degrees at droop, minimum 80.68 degrees just past ride height, recovering to 82.19 degrees at full bump.</canvas>
+      <div style="position:relative;height:260px;margin-bottom:1rem">
+        <canvas id="susp-angle-chart" role="img" aria-label="Shock angle U-curve through full suspension travel"></canvas>
       </div>
 
       <table class="data-table" style="margin-bottom:2rem">
@@ -1460,29 +1592,74 @@ function buildSuspensionPage(p) {
           <tr><td>Full bump</td><td>+9"</td><td>82.19°</td><td style="font-family:var(--mono);font-size:10px;color:#4a9e6b">Peak MR at max compression</td></tr>
         </tbody>
       </table>
-
-      <h3>Coilover Selection — Fox 3.0 IBP DSC</h3>
-      <p>The 3.0 body was chosen over the 2.5 for its substantially larger oil volume and thermal capacity. This project includes documented transmission overheating during sustained dune use — thermal management under high-intensity cycling was a real design requirement. The 3.0 also provides a stronger 1" shaft (versus 7/8"), greater damping range, and costs only ~$150 more. The DSC adjuster provides velocity-sensitive damping tunability without the complexity of an external bypass system.</p>
-      <p>12" stroke was selected for the future ±9" travel target — not for the current ±7" limit imposed by the stock knuckle's vertical UCA bolt orientation. A fabricated knuckle with a horizontal bolt will convert UCA travel from bearing misalignment to rotation, unlocking full ±9" travel. Sizing the stroke now means the coilover remains valid for that upgrade, avoiding a second purchase.</p>
-
-      <h3>Outstanding Work</h3>
-      <p>Kinematics and component selection are complete. Remaining items before fabrication: spring rate calculation (pending corner weight confirmation), shock tower design, CV plunge study under combined bump and steering, tie rod final kinematic confirmation, inboard LCA bushing selection. Future upgrade: fabricated knuckle to unlock ±9" travel.</p>
-
     </div>
   </div>
 </div>
 
-${sweepHtml}
-${dsHtml}
+<!-- ── COILOVER SELECTION ── -->
+<div class="detail-body-section">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Coilover Selection — Fox 3.0 IBP DSC</h2><div class="section-line"></div></div>
+  <div class="detail-layout">
+    <div class="detail-specs-panel" style="position:sticky;top:80px">
+      <h4>Selected Unit</h4>
+      <div class="sidebar-spec"><span class="sidebar-key">Model</span><span class="sidebar-val">Fox 3.0 IBP DSC</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Body Diameter</span><span class="sidebar-val">3.0"</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Shaft</span><span class="sidebar-val">1" diameter</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Stroke</span><span class="sidebar-val">12" (10.4" utilized)</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Adjuster</span><span class="sidebar-val">Internal bypass with DSC</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Spring ID</span><span class="sidebar-val">3.75" Eibach dual-rate</span></div>
+      <div class="sidebar-spec"><span class="sidebar-key">Cost delta vs 2.5"</span><span class="sidebar-val">~$150 more</span></div>
+    </div>
+    <div class="detail-prose">
+      <p>The 3.0 body was chosen over the 2.5 for its substantially larger oil volume and thermal capacity. Transmission overheating during sustained dune use was documented with FORScan — thermal management under high-intensity cycling was a real design requirement, not a theoretical concern. The 3.0 also provides a stronger 1" shaft versus 7/8", greater damping range, and costs only ~$150 more.</p>
+      <p>The DSC adjuster provides velocity-sensitive damping tunability — the shock responds differently to slow trail inputs versus sharp high-speed hits — without the cost and complexity of an external bypass system. It sits in a practical middle ground between a standard reservoir shock and a full external bypass setup.</p>
+      <p>12" stroke was selected for the future ±9" travel target, not the current ±7" limit imposed by the stock knuckle's vertical UCA bolt orientation. That vertical bolt forces all UCA travel through bearing misalignment rather than rotation, limiting practical travel to ±7" before the FMZ adapter binds. A fabricated knuckle with a horizontal bolt converts this to rotation, unlocking the full ±9" the geometry was designed for. Sizing the stroke now means the coilover remains valid when that upgrade is complete — avoiding a second shock purchase.</p>
+    </div>
+  </div>
+</div>
 
+<!-- ── BUILD PATH ── -->
+<div class="detail-body-section" style="background:var(--bg2)">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Build Path</h2><div class="section-line"></div></div>
+  <p style="font-size:0.9rem;font-weight:300;color:var(--text2);line-height:1.7;max-width:640px;margin-bottom:2rem">Kinematics and component selection are complete. The build proceeds in two phases — the near-term build uses the stock knuckle and runs at ±7" of travel; the knuckle upgrade unlocks the full ±9" the geometry was designed for.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem">Phase 1 — Near Term</div>
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border)">
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--amber);font-family:var(--mono);font-size:10px;margin-top:2px">01</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Spring rate calculation</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Pending corner weight confirmation and final motion ratio curve</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--amber);font-family:var(--mono);font-size:10px;margin-top:2px">02</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Shock tower design &amp; fabrication</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Stock UCA inboard mounts cut from factory tower and integrated into new fabricated structure</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--amber);font-family:var(--mono);font-size:10px;margin-top:2px">03</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">CV plunge validation</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Combined bump and steering — confirm axle stays within limits through the full envelope</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--amber);font-family:var(--mono);font-size:10px;margin-top:2px">04</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Tie rod final confirmation</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Misalignment sweep to confirm 3/4" chromoly heim joint spec</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--amber);font-family:var(--mono);font-size:10px;margin-top:2px">05</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Inboard LCA bushing selection</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Based on final geometry and load path through the inboard pivot</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.14em;color:var(--text3);text-transform:uppercase;margin-bottom:1rem">Phase 2 — Knuckle Upgrade</div>
+      <div style="display:flex;flex-direction:column;gap:1px;background:var(--border)">
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--text3);font-family:var(--mono);font-size:10px;margin-top:2px">01</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Fabricated knuckle</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Horizontal UCA bolt orientation converts travel from bearing misalignment to rotation — unlocks full ±9"</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--text3);font-family:var(--mono);font-size:10px;margin-top:2px">02</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Anti-roll bar end link relocation</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Outboard pickup point moved on LCA before considering bar replacement</div></div></div>
+        <div style="background:var(--bg);padding:0.9rem 1rem;display:flex;gap:0.75rem"><span style="color:var(--text3);font-family:var(--mono);font-size:10px;margin-top:2px">03</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px">Transmission auxiliary cooler</div><div style="font-size:12px;font-weight:300;color:var(--text2)">Tru-Cool or Derale stacked-plate — documented overheating during dune use</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 3D MODELS ── -->
 <div class="detail-body-section">
   <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">3D Models</h2><div class="section-line"></div></div>
   ${viewer}
 </div>
 
+<!-- ── FULL DESIGN STUDY ARCHIVE ── -->
 <div class="detail-gallery-section">
-  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Documentation</h2><div class="section-line"></div></div>
-  <div class="detail-gallery">
+  <div class="section-header"><span class="section-num">▸</span><h2 class="section-title" style="font-size:1.4rem;">Full Design Study Archive</h2><div class="section-line"></div></div>
+  <p style="font-family:var(--mono);font-size:10px;letter-spacing:0.04em;color:var(--text3);margin-bottom:1.5rem;line-height:1.6">All parametric design study outputs exported from SolidWorks and visualized in Excel. Click any image to enlarge.</p>
+  <div class="ds-grid">
+    ${(p.designStudy||[]).map(d =>
+      '<figure class="ds-cell"><img src="' + d.src + '" alt="" loading="lazy" onclick="openLightbox(\'' + d.src + '\')"><figcaption>' + d.cap + '</figcaption></figure>'
+    ).join('')}
+  </div>
+  <div style="margin-top:2rem" class="detail-gallery">
     ${p.images.map(src => '<img class="gallery-img" src="' + src + '" alt="" onclick="openLightbox(\'' + src + '\')">').join('')}
   </div>
 </div>
