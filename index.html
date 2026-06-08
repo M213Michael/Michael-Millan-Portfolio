@@ -1410,10 +1410,10 @@ function buildSuspensionPage(p) {
         <canvas id="susp-bearing-chart" role="img" aria-label="Bearing misalignment through travel, comparing straight ahead and 40 degree steering against the 30 degree rated limit">Peak misalignment: 27.49 degrees straight ahead, 29.3 degrees at full droop with 40 degree steering — both within the 30 degree limit.</canvas>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:2rem">
-        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">27.49°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak straight</div></div>
-        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">29.3°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak @ 40° steer</div></div>
+        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">27.4°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak straight (±9" travel)</div></div>
+        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--amber)">29.3°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Peak @ 40° steer (+9" bump)</div></div>
         <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:var(--text3)">30.0°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Rated limit</div></div>
-        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:#4a9e6b">0.7°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Min margin</div></div>
+        <div style="background:var(--bg2);padding:1rem"><div style="font-family:var(--condensed);font-size:1.5rem;font-weight:600;color:#4a9e6b">0.1°</div><div style="font-family:var(--mono);font-size:9px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase">Min straight (−3" travel)</div></div>
       </div>
 
       <h3>Bump Steer Correction</h3>
@@ -1429,9 +1429,9 @@ function buildSuspensionPage(p) {
       <p>The lower mount position was swept from 30% to 70% of LCA length in 1% increments. The two governing constraints were the 12" predetermined stroke limit and packaging clearance with the UCA. A higher mount percentage increases the motion ratio — more shock displacement per inch of wheel travel, allowing softer springs — but also forces the shock body to sweep further into the UCA at full bump, and demands more stroke to cover the same wheel travel.</p>
       <p>58% was selected as the optimum: average motion ratio of 0.58, 10.4" of stroke used, with 1.5" droop margin and 0.5" bump margin. The bump margin is tighter by design — a hydraulic bump stop will progressively resist the last inch of compression so the coilover never reaches its mechanical limit under normal use.</p>
 
-      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Average motion ratio vs mount position</div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3);text-transform:uppercase;margin:1.5rem 0 0.75rem">Shock angle vs suspension travel — Z=11.5" selected vs alternatives</div>
       <div style="position:relative;width:100%;height:240px;margin-bottom:2rem">
-        <canvas id="susp-mr-chart" role="img" aria-label="Average motion ratio as a function of lower mount position along the LCA, with 58 percent selected as the optimum">The selected 58% position produces an average motion ratio of 0.58 with 10.4 inches of stroke used within the 12-inch limit.</canvas>
+        <canvas id="susp-mr-chart" role="img" aria-label="Shock angle through travel for three upper eye Z positions, showing Z=11.5 inches as the selected optimum balancing angle progression and UCA clearance">At Z=11.5, shock angle ranges from 80.5 degrees at droop to a minimum of 75.7 degrees at full bump before recovering. Z=14 provides better angles but conflicts with UCA geometry.</canvas>
       </div>
 
       <div class="callout">
@@ -1455,9 +1455,8 @@ function buildSuspensionPage(p) {
           <tr><td>−6"</td><td>−6"</td><td>83.00°</td><td style="font-family:var(--mono);font-size:10px;color:var(--text3)">Tender spring active</td></tr>
           <tr><td>−3"</td><td>−3"</td><td>81.77°</td><td style="font-family:var(--mono);font-size:10px;color:var(--text3)">Tender spring active</td></tr>
           <tr><td>Ride height</td><td>0</td><td>80.98°</td><td style="font-family:var(--mono);font-size:10px;color:var(--amber)">Main spring engages</td></tr>
-          <tr style="background:var(--amber-dim)"><td style="border-left:2px solid var(--amber)">Min angle</td><td>+1" approx.</td><td>80.68°</td><td style="font-family:var(--mono);font-size:10px">MR floor — U-curve minimum</td></tr>
-          <tr><td>+3"</td><td>+3"</td><td>81.00°</td><td style="font-family:var(--mono);font-size:10px;color:#4a9e6b">Rising MR, stiffening</td></tr>
-          <tr><td>+6"</td><td>+6"</td><td>81.00°</td><td style="font-family:var(--mono);font-size:10px;color:#4a9e6b">Deep bump, rising MR</td></tr>
+          <tr style="background:var(--amber-dim)"><td style="border-left:2px solid var(--amber)">Minimum angle</td><td>+3"</td><td>80.68°</td><td style="font-family:var(--mono);font-size:10px">MR floor — U-curve minimum</td></tr>
+          <tr><td>+6"</td><td>+6"</td><td>81.00°</td><td style="font-family:var(--mono);font-size:10px;color:#4a9e6b">Rising MR, stiffening</td></tr>
           <tr><td>Full bump</td><td>+9"</td><td>82.19°</td><td style="font-family:var(--mono);font-size:10px;color:#4a9e6b">Peak MR at max compression</td></tr>
         </tbody>
       </table>
@@ -1507,44 +1506,101 @@ function buildSuspensionCharts() {
   };
   const legend = {display:true,position:'top',labels:{color:TEXT2,font:{family:"'Space Mono',monospace",size:10},boxWidth:10,padding:14,usePointStyle:true}};
 
-  /* Bearing misalignment */
+  /* ── BEARING MISALIGNMENT (real data: Bearing Angle with Steering Input study, Axis1=84 Axis2=58) ──
+     Straight: minimum at -3" (0.1°), peak at ±9" (27.4°)
+     40° steering: peak at +9" (29.3°) — within 30° limit */
   new Chart(document.getElementById('susp-bearing-chart'),{type:'line',data:{
-    labels:['−9" droop','−6"','−3"','Ride ht','+3"','+6"','+9" bump'],
+    labels:['-9"','-8"','-7"','-6"','-5"','-4"','-3"','-2"','-1"','0','+1"','+2"','+3"','+4"','+5"','+6"','+7"','+8"','+9"'],
     datasets:[
-      {label:'Straight ahead',data:[22.1,24.5,26.1,27.0,27.49,26.8,25.4],borderColor:AMBER,backgroundColor:'transparent',pointBackgroundColor:AMBER,pointRadius:4,tension:0.4},
-      {label:'40° steering',data:[29.3,28.1,27.4,26.9,27.4,26.2,24.8],borderColor:'#e8a030',backgroundColor:'transparent',pointBackgroundColor:'#e8a030',pointRadius:4,tension:0.4,borderDash:[4,3]},
-      {label:'30° limit',data:[30,30,30,30,30,30,30],borderColor:RED,backgroundColor:'rgba(192,90,74,0.06)',pointRadius:0,borderDash:[6,4],fill:false}
+      {label:'Straight ahead',
+       data:[27.4,19.5,14.5,10.3,6.5,3.1,0.1,3.1,5.9,8.6,11.2,13.7,16.0,18.3,20.4,22.4,24.3,26.0,27.4],
+       borderColor:AMBER,backgroundColor:'transparent',
+       pointBackgroundColor:[AMBER,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,'#e8a030',TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,AMBER],
+       pointRadius:[5,3,3,3,3,3,7,3,3,3,3,3,3,3,3,3,3,3,5],tension:0.3},
+      {label:'40° steering',
+       data:[27.4,20.0,15.2,11.4,8.5,6.5,5.9,6.9,8.7,10.9,13.2,15.5,17.7,19.9,22.0,24.1,26.0,27.7,29.3],
+       borderColor:'#e8a030',backgroundColor:'transparent',
+       pointBackgroundColor:['#e8a030','#e8a030','#e8a030',TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,RED],
+       pointRadius:[4,4,4,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,7],tension:0.3,borderDash:[4,3]},
+      {label:'30° rated limit',
+       data:[30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30],
+       borderColor:RED,backgroundColor:'rgba(192,90,74,0.05)',pointRadius:0,borderDash:[6,4],fill:false}
     ]
-  },options:{...base,plugins:{...base.plugins,legend},scales:{...base.scales,y:{...base.scales.y,min:18,max:32,ticks:{...base.scales.y.ticks,callback:v=>v+'°'}}}}});
+  },options:{...base,plugins:{...base.plugins,legend},
+    scales:{...base.scales,
+      x:{...base.scales.x,ticks:{...base.scales.x.ticks,maxTicksLimit:10}},
+      y:{...base.scales.y,min:0,max:32,ticks:{...base.scales.y.ticks,callback:v=>v+'°'}}}}});
 
-  /* Bump steer */
+  /* ── BUMP STEER (real data: Fine Adjustment study, all 19 travel positions) ──
+     Rack 0 = uncorrected extended geometry
+     Rack -0.125 = optimal correction */
   new Chart(document.getElementById('susp-bump-chart'),{type:'line',data:{
-    labels:['−9"','−7"','−5"','−3"','−1"','0','+1"','+3"','+5"','+7"'],
+    labels:['-9"','-8"','-7"','-6"','-5"','-4"','-3"','-2"','-1"','0','+1"','+2"','+3"','+4"','+5"','+6"','+7"','+8"','+9"'],
     datasets:[
-      {label:'Before correction',data:[1.8,1.2,0.6,0.2,-0.05,0.05,0.18,0.35,0.55,0.78],borderColor:RED,backgroundColor:'transparent',pointBackgroundColor:RED,pointRadius:3,tension:0.4,borderDash:[4,3]},
-      {label:'After −0.125" rack correction',data:[1.1,0.15,0.1,0.09,0.08,0.09,0.10,0.11,0.12,0.14],borderColor:GREEN,backgroundColor:'transparent',pointBackgroundColor:GREEN,pointRadius:3,tension:0.4}
+      {label:'Rack height 0 (uncorrected)',
+       data:[2.93,0.00,0.53,0.61,0.53,0.40,0.26,0.12,0.00,0.10,0.18,0.24,0.27,0.28,0.27,0.25,0.23,0.21,0.22],
+       borderColor:RED,backgroundColor:'transparent',
+       pointBackgroundColor:RED,pointRadius:3,tension:0.3,borderDash:[4,3]},
+      {label:'Rack height −0.125" (optimal)',
+       data:[4.01,0.80,0.10,0.10,0.13,0.09,0.03,0.03,0.07,0.11,0.12,0.10,0.07,0.01,0.06,0.15,0.25,0.34,0.41],
+       borderColor:GREEN,backgroundColor:'transparent',
+       pointBackgroundColor:['#c05a4a',TEXT3,TEXT3,TEXT3,TEXT3,TEXT3,GREEN,GREEN,GREEN,TEXT3,TEXT3,TEXT3,TEXT3,GREEN,TEXT3,TEXT3,TEXT3,TEXT3,TEXT3],
+       pointRadius:[6,3,3,3,3,3,5,5,5,3,3,3,3,5,3,3,3,3,3],tension:0.3}
     ]
-  },options:{...base,plugins:{...base.plugins,legend},scales:{...base.scales,y:{...base.scales.y,ticks:{...base.scales.y.ticks,callback:v=>v.toFixed(1)+'°'}}}}});
+  },options:{...base,plugins:{...base.plugins,legend,
+      tooltip:{...base.plugins.tooltip,callbacks:{label:ctx=>'Bump steer: '+ctx.parsed.y.toFixed(2)+'°'}}},
+    scales:{...base.scales,
+      x:{...base.scales.x,ticks:{...base.scales.x.ticks,maxTicksLimit:10}},
+      y:{...base.scales.y,min:0,max:4.5,
+        ticks:{...base.scales.y.ticks,callback:v=>v.toFixed(1)+'°'}}}}});
 
-  /* Motion ratio */
-  const mrPos=[30,35,40,45,50,53,55,58,60,63,65,70];
-  const mrVal=[0.38,0.41,0.44,0.47,0.51,0.54,0.55,0.58,0.60,0.63,0.65,0.70];
+  /* ── MOTION RATIO — shock angle vs Z upper eye position (Z=11.5 selected)
+     Real data from "Design Study Z Comp Upper Eye MR" table, Z=11.5 column ── */
   new Chart(document.getElementById('susp-mr-chart'),{type:'line',data:{
-    labels:mrPos.map(v=>v+'%'),
+    labels:['-9"','-6"','-3"','0 (ride ht)','+3"','+6"','+9"'],
     datasets:[
-      {label:'Avg motion ratio',data:mrVal,borderColor:AMBER,backgroundColor:'rgba(200,135,26,0.1)',pointBackgroundColor:mrPos.map(v=>v===58?'#e8a030':AMBER),pointRadius:mrPos.map(v=>v===58?7:3),tension:0.3,fill:true},
-      {label:'Stroke limit region',data:mrPos.map((v,i)=>v>=63?mrVal[i]:null),borderColor:RED,backgroundColor:'rgba(192,90,74,0.08)',pointRadius:0,borderDash:[5,4],fill:true,spanGaps:false}
+      {label:'Shock angle at Z=11.5" (selected)',
+       data:[80.5,78.9,77.6,76.6,76.0,75.7,76.0],
+       borderColor:AMBER,backgroundColor:'rgba(200,135,26,0.1)',
+       pointBackgroundColor:[TEXT3,TEXT3,TEXT3,AMBER,RED,RED,GREEN],
+       pointRadius:[4,4,4,6,6,7,5],tension:0.4,fill:true},
+      {label:'Z=14" (max outboard — UCA conflict)',
+       data:[82.5,81.7,80.8,80.1,79.6,79.3,79.1],
+       borderColor:RED,backgroundColor:'transparent',
+       pointRadius:3,tension:0.4,borderDash:[5,4]},
+      {label:'Z=10" (min — low angle)',
+       data:[79.9,78.2,76.9,75.8,75.1,74.8,75.1],
+       borderColor:TEXT3,backgroundColor:'transparent',
+       pointRadius:3,tension:0.4,borderDash:[3,5]}
     ]
-  },options:{...base,plugins:{...base.plugins,legend},scales:{...base.scales,y:{...base.scales.y,min:0.33,max:0.75,ticks:{...base.scales.y.ticks,callback:v=>v.toFixed(2)}}}}});
+  },options:{...base,plugins:{...base.plugins,legend,
+      tooltip:{...base.plugins.tooltip,callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y.toFixed(1)+'°'}}},
+    scales:{...base.scales,
+      y:{...base.scales.y,min:73,max:84,
+        ticks:{...base.scales.y.ticks,callback:v=>v+'°'}}}}});
 
-  /* Shock angle */
+  /* ── SHOCK ANGLE (real data: Final Coil Over Location study)
+     LCA Z variable: 0=full droop (-9"), 9=ride height (0"), 18=full bump (+9") ── */
   new Chart(document.getElementById('susp-angle-chart'),{type:'line',data:{
-    labels:['−9" droop','−6"','−3"','Ride ht','+1" min','+3"','+6"','+9" bump'],
+    labels:['-9"\nFull Droop','-6"','-3"','0\nRide Ht','+3"\nMin','+6"','+9"\nFull Bump'],
     datasets:[
-      {label:'Shock angle',data:[84.65,83.00,81.77,80.98,80.68,81.00,81.00,82.19],borderColor:AMBER,backgroundColor:'transparent',pointBackgroundColor:[TEXT2,TEXT2,TEXT2,AMBER,RED,GREEN,GREEN,GREEN],pointRadius:[4,4,4,5,7,4,4,6],tension:0.4},
-      {label:'Vertical 90° (ideal)',data:[90,90,90,90,90,90,90,90],borderColor:'rgba(255,255,255,0.08)',pointRadius:0,borderDash:[4,6]}
+      {label:'Shock angle (interior, from horizontal)',
+       data:[84.6536,82.9970,81.7708,80.9768,80.6756,80.9985,82.1917],
+       borderColor:AMBER,backgroundColor:'transparent',
+       pointBackgroundColor:[TEXT2,TEXT2,TEXT2,AMBER,RED,GREEN,GREEN],
+       pointRadius:[5,4,4,6,8,5,6],tension:0.4},
+      {label:'90° vertical (theoretical ideal)',
+       data:[90,90,90,90,90,90,90],
+       borderColor:'rgba(255,255,255,0.07)',pointRadius:0,borderDash:[4,6]}
     ]
-  },options:{...base,plugins:{...base.plugins,legend},scales:{...base.scales,y:{...base.scales.y,min:79,max:92,ticks:{...base.scales.y.ticks,callback:v=>v+'°'}}}}});
+  },options:{...base,plugins:{...base.plugins,legend,
+      tooltip:{...base.plugins.tooltip,callbacks:{label:ctx=>{
+        if(ctx.datasetIndex===1)return'Vertical ref: 90°';
+        return'Shock angle: '+ctx.parsed.y.toFixed(2)+'°';
+      }}}},
+    scales:{...base.scales,
+      y:{...base.scales.y,min:79,max:92,
+        ticks:{...base.scales.y.ticks,callback:v=>v+'°'}}}}});
 }
 
 /* Hook: rebuild charts whenever the suspension page is opened */
