@@ -90,6 +90,7 @@
   .project-num { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.1em; }
   .project-thumb { width: 100%; aspect-ratio: 16/10; background: var(--bg2); border: 1px solid var(--border); overflow: hidden; margin: 0.5rem 0; position: relative; }
   .project-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .project-thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .project-title { font-family: var(--condensed); font-size: 1.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; line-height: 1.1; display: flex; align-items: center; gap: 10px; }
   .project-title .chev { font-size: 0.9rem; color: var(--amber); transition: transform 0.25s; margin-left: auto; }
   .project-card.open .chev { transform: rotate(90deg); }
@@ -889,8 +890,13 @@ function applyPortrait() {
 
 // ── LANDING CARDS ──
 function buildCard(p) {
-  const img = p.thumb || firstImage(p);
-  const thumb = img ? '<img src="' + img + '" alt="">' : pendingBox(p.id);
+  let thumb;
+  if (p.sweepVideo) {
+    thumb = '<video src="' + p.sweepVideo.src + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block"></video>';
+  } else {
+    const img = p.thumb || firstImage(p);
+    thumb = img ? '<img src="' + img + '" alt="">' : pendingBox(p.id);
+  }
   const tags = p.tags.map(t => '<span class="tag">' + t + '</span>').join('');
   return '<div class="project-card" id="card-' + p.id + '">' +
     '<div class="project-card-head" onclick="toggleCard(\'' + p.id + '\')">' +
