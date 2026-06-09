@@ -466,7 +466,7 @@ const SITE = {
       tags: ["SolidWorks", "Kinematics", "Parametric Sweep", "Fox 3.0 IBP", "From Scratch"],
       desc: "A ground-up long-travel front suspension design for a 2021 F-150, targeting ±9\" of wheel travel. Every geometric decision — bearing axes, bump steer, mount position, shock angle — was validated through multi-stage parametric design studies.",
       folder: "Suspension",
-      images: ["Scan.jpg", "Scan1.jpg"],
+      images: ["truck1.jpeg", "Scan.jpg", "Scan1.jpg"],
       sweepVideo: { file: "LTwheelsweep.mp4", cap: "SolidWorks kinematic sweep, full travel" },
       designStudy: [
         { file: "D1.png", cap: "LCA+3, UCA+3, 18in width w/ steering — LCA vs outboard CV angle" },
@@ -1350,7 +1350,10 @@ function buildSuspensionPage(p) {
         '<div class="viewer-status"><div class="status-dot" data-dot="' + vid + '"></div><span data-status="' + vid + '">Ready — choose a model</span></div>' +
       '</div></div>';
 
-  const heroImg = (p.images && p.images.length) ? '<img id="hero-img-suspension" src="' + p.images[0] + '" alt="">' : '';
+  const heroMain = p.sweepVideo
+    ? '<video src="' + p.sweepVideo.src + '" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;display:block"></video>'
+    : (p.images && p.images.length ? '<img id="hero-img-suspension" src="' + p.images[0] + '" alt="">' : '');
+  const heroImg = heroMain;
   const heroThumbs = (p.images && p.images.length > 1) ?
     '<div class="hero-thumbs" id="hero-thumbs-suspension">' +
     p.images.map((src, i) => '<div class="hero-thumb' + (i===0?' active':'') + '" onclick="heroSet(\'suspension\',' + i + ')"><img src="' + src + '" alt=""></div>').join('') + '</div>' : '';
@@ -1370,7 +1373,7 @@ function buildSuspensionPage(p) {
       <div class="detail-page-tags">${tags}</div>
     </div>
     <div class="hero-gallery">
-      <div class="hero-main">${heroImg}</div>
+      <div class="hero-main">${heroMain}</div>
       ${heroThumbs}
     </div>
   </div>
